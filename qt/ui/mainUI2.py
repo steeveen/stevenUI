@@ -7,9 +7,11 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from qt.com.ImageShower import ImageShower
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
+    def setupUi(self, MainWindow,ctPath=r'E:\pyWorkspace\stevenUI\res\ct.tif',suvPath=r'E:\pyWorkspace\stevenUI\res\suv.tif',
+                gtPath=r'E:\pyWorkspace\stevenUI\res\gt.bmp',prePath=r'E:\pyWorkspace\stevenUI\res\pre.bmp'):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1138, 611)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -34,29 +36,26 @@ class Ui_MainWindow(object):
         self.gtSegLabel.setStyleSheet("background-color:#bbbbbb")
         self.gtSegLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.gtSegLabel.setObjectName("gtSegLabel")
-        self.ctILabel = QtWidgets.QLabel(self.mFrame)
+        self.ctILabel = ImageShower(self.mFrame,imagePath=ctPath)
         self.ctILabel.setGeometry(QtCore.QRect(60, 50, 231, 450))
         font = QtGui.QFont()
         font.setPointSize(15)
         self.ctILabel.setFont(font)
         self.ctILabel.setStyleSheet("background-color:#aaaaaa")
-        self.ctILabel.setAlignment(QtCore.Qt.AlignCenter)
         self.ctILabel.setObjectName("ctILabel")
-        self.petILabel = QtWidgets.QLabel(self.mFrame)
+        self.petILabel = ImageShower(self.mFrame,imagePath=suvPath)
         self.petILabel.setGeometry(QtCore.QRect(310, 50, 231, 450))
         font = QtGui.QFont()
         font.setPointSize(15)
         self.petILabel.setFont(font)
         self.petILabel.setStyleSheet("background-color:#aaaaaa")
-        self.petILabel.setAlignment(QtCore.Qt.AlignCenter)
         self.petILabel.setObjectName("petILabel")
-        self.gtSegILabel = QtWidgets.QLabel(self.mFrame)
+        self.gtSegILabel = ImageShower(self.mFrame,imagePath=gtPath)
         self.gtSegILabel.setGeometry(QtCore.QRect(560, 50, 231, 450))
         font = QtGui.QFont()
         font.setPointSize(15)
         self.gtSegILabel.setFont(font)
         self.gtSegILabel.setStyleSheet("background-color:#aaaaaa")
-        self.gtSegILabel.setAlignment(QtCore.Qt.AlignCenter)
         self.gtSegILabel.setObjectName("gtSegILabel")
         self.groupBox = QtWidgets.QGroupBox(self.mFrame)
         self.groupBox.setGeometry(QtCore.QRect(830, 19, 251, 131))
@@ -96,11 +95,11 @@ class Ui_MainWindow(object):
         self.label_13.setObjectName("label_13")
         self.gtBtn = QtWidgets.QPushButton(self.mFrame)
         self.gtBtn.setGeometry(QtCore.QRect(560, 520, 111, 31))
-        self.gtBtn.setStyleSheet("background-color:#ee1100")
+        self.gtBtn.setStyleSheet("background-color:#aaaaaa")
         self.gtBtn.setObjectName("gtBtn")
         self.segBtn = QtWidgets.QPushButton(self.mFrame)
         self.segBtn.setGeometry(QtCore.QRect(680, 520, 111, 31))
-        self.segBtn.setStyleSheet("background-color:#11aa00")
+        self.segBtn.setStyleSheet("background-color:#aaaaaa")
         self.segBtn.setObjectName("segBtn")
         self.groupBox_3 = QtWidgets.QGroupBox(self.mFrame)
         self.groupBox_3.setGeometry(QtCore.QRect(830, 170, 251, 101))
@@ -246,9 +245,6 @@ class Ui_MainWindow(object):
         self.ctLabel.setText(_translate("MainWindow", "CT"))
         self.petLabel.setText(_translate("MainWindow", "PET"))
         self.gtSegLabel.setText(_translate("MainWindow", "Segmentation"))
-        self.ctILabel.setText(_translate("MainWindow", "NoImage"))
-        self.petILabel.setText(_translate("MainWindow", "NoImage"))
-        self.gtSegILabel.setText(_translate("MainWindow", "NoImage"))
         self.groupBox.setTitle(_translate("MainWindow", "患者信息"))
         self.label.setText(_translate("MainWindow", "姓名："))
         self.label_2.setText(_translate("MainWindow", "性别："))
@@ -288,8 +284,12 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
+    ctPath = r'E:\pyWorkspace\stevenUI\res\ct.tif'
+    suvPath = r'E:\pyWorkspace\stevenUI\res\suv.tif'
+    gtPath = r'E:\pyWorkspace\stevenUI\res\gt.bmp'
+    prePath = r'E:\pyWorkspace\stevenUI\res\pre.bmp'
     ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
+    ui.setupUi(MainWindow,ctPath=ctPath,suvPath=suvPath,gtPath=gtPath,prePath=prePath)
     MainWindow.show()
     sys.exit(app.exec_())
 
