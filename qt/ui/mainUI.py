@@ -95,6 +95,7 @@ class Ui_MainWindow(object):
         self.label_13.setAlignment(QtCore.Qt.AlignCenter)
         self.label_13.setObjectName("label_13")
         self.gtBtn = QtWidgets.QPushButton(self.mFrame)
+        self.gtBtn.clicked[bool].connect()
         self.gtBtn.setGeometry(QtCore.QRect(560, 520, 111, 31))
         self.gtBtn.setStyleSheet("background-color:#ee1100")
         self.gtBtn.setObjectName("gtBtn")

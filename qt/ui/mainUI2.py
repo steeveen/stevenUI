@@ -244,7 +244,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.ctLabel.setText(_translate("MainWindow", "CT"))
         self.petLabel.setText(_translate("MainWindow", "PET"))
-        self.gtSegLabel.setText(_translate("MainWindow", "Segmentation"))
+        self.gtSegLabel.setText(_translate("MainWindow", "Fuse"))
         self.groupBox.setTitle(_translate("MainWindow", "患者信息"))
         self.label.setText(_translate("MainWindow", "姓名："))
         self.label_2.setText(_translate("MainWindow", "性别："))
@@ -286,7 +286,7 @@ if __name__ == "__main__":
     MainWindow = QtWidgets.QMainWindow()
     ctPath = r'E:\pyWorkspace\stevenUI\res\ct.tif'
     suvPath = r'E:\pyWorkspace\stevenUI\res\suv.tif'
-    gtPath = r'E:\pyWorkspace\stevenUI\res\gt.bmp'
+    gtPath = r'E:\pyWorkspace\stevenUI\res\fuse.bmp'
     prePath = r'E:\pyWorkspace\stevenUI\res\pre.bmp'
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow,ctPath=ctPath,suvPath=suvPath,gtPath=gtPath,prePath=prePath)
