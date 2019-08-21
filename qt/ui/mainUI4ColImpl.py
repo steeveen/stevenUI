@@ -68,5 +68,6 @@ if __name__ == '__main__':
     prePath = r'E:\pyWorkspace\stevenUI\res\pre.bmp'
     ui = mainWindowImp()
     ui.setupUi(MainWindow, ctPath=ctPath, suvPath=suvPath, gtPath=gtPath, prePath=prePath)
+    ui.statusbar.showMessage('Huiyan Jiang Lab, Software College, Northeastern University(NEU), Shenyang, Liaoning, China')
     MainWindow.show()
     sys.exit(app.exec_())
