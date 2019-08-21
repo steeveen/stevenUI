@@ -43,10 +43,8 @@ class ImageShower(QWidget):
         self.img = QPixmap(imagePath)
         self.scaled_img = self.img.scaled(self.size())
         self.point = QPoint(0, 0)
-        self.wu=23
-        self.hu=45
-        # print('init size', self.img.size())
-        # print('init unit', self.scaleUnit)
+        # self.scaleUnit=self.size()/50
+
         self.initUI()
 
     def initUI(self):
@@ -66,8 +64,6 @@ class ImageShower(QWidget):
 
     def draw_img(self, painter):
         painter.drawPixmap(self.point, self.scaled_img)
-        self.scaleUnit = self.img.size() / 50
-        print('paint',self.scaled_img.size())
 
     def mouseDoubleClickEvent(self, QMouseEvent):
         print('double click')
@@ -95,22 +91,19 @@ class ImageShower(QWidget):
 
     def wheelEvent(self, e):
         if e.angleDelta().y() > 0:
-            # 缩小图片
-            if self.scaled_img.width()>self.wu and self.scaled_img.height()>self.hu:
-
-                self.scaled_img = self.img.scaled(self.scaled_img.width()-self.wu, self.scaled_img.height()-self.hu)
-                new_w = e.x() - (self.scaled_img.width() * (e.x() - self.point.x())) / (self.scaled_img.width() + self.wu)
-                new_h = e.y() - (self.scaled_img.height() * (e.y() - self.point.y())) / (self.scaled_img.height() + self.hu)
-                print('rescaled:',self.scaled_img.width()-self.wu, self.scaled_img.height()-self.hu )
-                self.point = QPoint(new_w, new_h)
-                self.repaint()
-        elif e.angleDelta().y() < 0:
+            print(e.angleDelta())
             # 放大图片
-            self.scaled_img = self.img.scaled(self.scaled_img.width()+self.wu, self.scaled_img.height()+self.hu)
-            new_w = e.x() - (self.scaled_img.width() * (e.x() - self.point.x())) / (self.scaled_img.width() - self.wu)
-            new_h = e.y() - (self.scaled_img.height() * (e.y() - self.point.y())) / (self.scaled_img.height() - self.hu)
-            print('rescaled:', self.scaled_img.width() - self.wu,
-                  self.scaled_img.height() - self.hu)
+            self.scaled_img = self.img.scaled(self.scaled_img.width()-5, self.scaled_img.height()-5)
+            new_w = e.x() - (self.scaled_img.width() * (e.x() - self.point.x())) / (self.scaled_img.width() + 5)
+            new_h = e.y() - (self.scaled_img.height() * (e.y() - self.point.y())) / (self.scaled_img.height() + 5)
+            self.point = QPoint(new_w, new_h)
+            self.repaint()
+        elif e.angleDelta().y() < 0:
+            print(e.angleDelta())
+            # 缩小图片
+            self.scaled_img = self.img.scaled(self.scaled_img.width()+5, self.scaled_img.height()+5)
+            new_w = e.x() - (self.scaled_img.width() * (e.x() - self.point.x())) / (self.scaled_img.width() - 5)
+            new_h = e.y() - (self.scaled_img.height() * (e.y() - self.point.y())) / (self.scaled_img.height() - 5)
             self.point = QPoint(new_w, new_h)
             self.repaint()
 
