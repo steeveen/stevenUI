@@ -7,7 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from qt.com.ImageShower import ImageShower
+from qt.com.ImageShowerOld import ImageShower
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow,ctPath=r'E:\pyWorkspace\stevenUI\res\ct.tif',suvPath=r'E:\pyWorkspace\stevenUI\res\suv.tif',

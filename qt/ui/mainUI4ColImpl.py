@@ -41,7 +41,7 @@ class mainWindowImp(Ui_MainWindow):
         self.petILabel.setStyleSheet("background-color:#aaaaaa")
         self.petILabel.setObjectName("petILabel")
 
-        self.gtSegILabel = ImageShower(self.mFrame, imagePath=gtPath)
+        self.gtSegILabel = ImageShower(self.mFrame, imagePath=prePath)
         self.gtSegILabel.setGeometry(QtCore.QRect(560, 50, 230, 450))
         font = QtGui.QFont()
         font.setPointSize(15)
@@ -49,7 +49,7 @@ class mainWindowImp(Ui_MainWindow):
         self.gtSegILabel.setStyleSheet("background-color:#aaaaaa")
         self.gtSegILabel.setObjectName("gtSegILabel")
 
-        self.gtSegILabel_2 = ImageShower(self.mFrame, imagePath=prePath)
+        self.gtSegILabel_2 = ImageShower(self.mFrame, imagePath=gtPath)
         self.gtSegILabel_2.setGeometry(QtCore.QRect(810, 50, 230, 450))
         font = QtGui.QFont()
         font.setPointSize(15)

@@ -67,10 +67,11 @@ class ImageShower(QWidget):
     def draw_img(self, painter):
         painter.drawPixmap(self.point, self.scaled_img)
         self.scaleUnit = self.img.size() / 50
-        print('paint',self.scaled_img.size())
+        # print('paint',self.scaled_img.size())
 
-    def mouseDoubleClickEvent(self, QMouseEvent):
-        print('double click')
+    # def mouseDoubleClickEvent(self, QMouseEvent):
+        # print('double click')
+
 
     def mouseMoveEvent(self, e):  # 重写移动事件
         if self.left_click:
@@ -101,7 +102,7 @@ class ImageShower(QWidget):
                 self.scaled_img = self.img.scaled(self.scaled_img.width()-self.wu, self.scaled_img.height()-self.hu)
                 new_w = e.x() - (self.scaled_img.width() * (e.x() - self.point.x())) / (self.scaled_img.width() + self.wu)
                 new_h = e.y() - (self.scaled_img.height() * (e.y() - self.point.y())) / (self.scaled_img.height() + self.hu)
-                print('rescaled:',self.scaled_img.width()-self.wu, self.scaled_img.height()-self.hu )
+                # print('rescaled:',self.scaled_img.width()-self.wu, self.scaled_img.height()-self.hu )
                 self.point = QPoint(new_w, new_h)
                 self.repaint()
         elif e.angleDelta().y() < 0:
@@ -109,8 +110,8 @@ class ImageShower(QWidget):
             self.scaled_img = self.img.scaled(self.scaled_img.width()+self.wu, self.scaled_img.height()+self.hu)
             new_w = e.x() - (self.scaled_img.width() * (e.x() - self.point.x())) / (self.scaled_img.width() - self.wu)
             new_h = e.y() - (self.scaled_img.height() * (e.y() - self.point.y())) / (self.scaled_img.height() - self.hu)
-            print('rescaled:', self.scaled_img.width() - self.wu,
-                  self.scaled_img.height() - self.hu)
+            # print('rescaled:', self.scaled_img.width() - self.wu,
+            #       self.scaled_img.height() - self.hu)
             self.point = QPoint(new_w, new_h)
             self.repaint()
 
