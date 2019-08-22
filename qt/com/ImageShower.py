@@ -45,8 +45,9 @@ class ImageShower(QWidget):
         self.point = QPoint(0, 0)
         self.wu=23
         self.hu=45
+        self.left_click=False
 
-        self.setMouseTracking(True)
+        # self.setMouseTracking(True)
         # print('init size', self.img.size())
         # print('init unit', self.scaleUnit)
         self.initUI()
@@ -78,12 +79,14 @@ class ImageShower(QWidget):
     def mouseMoveEvent(self, e):  # 重写移动事件
         # print('mouse move',e.pos())
         # print('mouse trach?',self.hasMouseTracking())
-        print('move to ',e.localPos().x())
         if self.left_click:
             self._endPos = e.pos() - self._startPos
             self.point = self.point + self._endPos
             self._startPos = e.pos()
             self.repaint()
+        # print('move to ',e.localPos().x())
+
+
 
 
     def mousePressEvent(self, e):
