@@ -98,22 +98,24 @@ class ImageShower(QWidget):
         if e.button() == Qt.LeftButton:
             self.left_click = False
         elif e.button() == Qt.RightButton:
-            self.point = QPoint(0, 0)
-            self.scaled_img = self.img.scaled(self.size())
-            self.repaint()
-
+            self.recoverImg()
+    def recoverImg(self):
+        self.point = QPoint(0, 0)
+        self.scaled_img = self.img.scaled(self.size())
+        self.repaint()
 
     def wheelEvent(self, e):
         if e.angleDelta().y() > 0:
             # 缩小图片
-            if self.scaled_img.width()>self.wu and self.scaled_img.height()>self.hu:
-
+            if self.scaled_img.width()>self.width() and self.scaled_img.height()>self.height():
                 self.scaled_img = self.img.scaled(self.scaled_img.width()-self.wu, self.scaled_img.height()-self.hu)
                 new_w = e.x() - (self.scaled_img.width() * (e.x() - self.point.x())) / (self.scaled_img.width() + self.wu)
                 new_h = e.y() - (self.scaled_img.height() * (e.y() - self.point.y())) / (self.scaled_img.height() + self.hu)
-                # print('rescaled:',self.scaled_img.width()-self.wu, self.scaled_img.height()-self.hu )
-                self.point = QPoint(new_w, new_h)
-                self.repaint()
+                if self.scaled_img.size()==self.size():
+                    self.recoverImg()
+                else:
+                    self.point = QPoint(new_w, new_h)
+                    self.repaint()
         elif e.angleDelta().y() < 0:
             # 放大图片
             self.scaled_img = self.img.scaled(self.scaled_img.width()+self.wu, self.scaled_img.height()+self.hu)
