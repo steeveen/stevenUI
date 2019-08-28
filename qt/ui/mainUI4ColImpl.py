@@ -60,12 +60,13 @@ class mainWindowImp(Ui_MainWindow):
 from PyQt5 import QtCore,QtGui,QtWidgets
 if __name__ == '__main__':
     import sys
+    import os
     app=QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    ctPath = r'E:\pyWorkspace\stevenUI\res\ct.tif'
-    suvPath = r'E:\pyWorkspace\stevenUI\res\suv.tif'
-    gtPath = r'E:\pyWorkspace\stevenUI\res\gt.bmp'
-    prePath = r'E:\pyWorkspace\stevenUI\res\pre.bmp'
+    ctPath = r'..\..\res\ct.tif'
+    suvPath = r'..\..\res\suv.tif'
+    gtPath = r'..\..\res\gt.bmp'
+    prePath = r'..\..\res\pre.bmp'
     ui = mainWindowImp()
     ui.setupUi(MainWindow, ctPath=ctPath, suvPath=suvPath, gtPath=gtPath, prePath=prePath)
     ui.statusbar.showMessage('Huiyan Jiang Lab, Software College, Northeastern University(NEU), Shenyang, Liaoning, China')

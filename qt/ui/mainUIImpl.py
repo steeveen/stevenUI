@@ -54,10 +54,10 @@ if __name__ == '__main__':
     import sys
     app=QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    ctPath = r'E:\pyWorkspace\stevenUI\res\ct.tif'
-    suvPath = r'E:\pyWorkspace\stevenUI\res\suv.tif'
-    gtPath = r'E:\pyWorkspace\stevenUI\res\fuse.bmp'
-    prePath = r'E:\pyWorkspace\stevenUI\res\pre.bmp'
+    ctPath = r'..\..\res\ct.tif'
+    suvPath = r'..\..\res\suv.tif'
+    gtPath = r'..\..\res\pre.bmp'
+    prePath = r'..\..\res\pre.bmp'
     ui = mainWindowImp()
     ui.setupUi(MainWindow, ctPath=ctPath, suvPath=suvPath, gtPath=gtPath, prePath=prePath)
     MainWindow.show()
