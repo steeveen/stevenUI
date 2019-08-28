@@ -32,6 +32,7 @@ class mainWindowImp(Ui_MainWindow):
         self.ctILabel.setFont(font)
         self.ctILabel.setStyleSheet("background-color:#aaaaaa")
         self.ctILabel.setObjectName("ctILabel")
+        self.ctILabel.setLocWatcher(self.xLab,self.yLab,self.ctLab)
 
         self.petILabel = ImageShower(self.mFrame, imagePath=suvPath)
         self.petILabel.setGeometry(QtCore.QRect(310, 50, 230, 450))

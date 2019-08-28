@@ -42,52 +42,62 @@ class ImageShower(QWidget):
         self.parent = parent
         self.img = QPixmap(imagePath)
         self.scaled_img = self.img.scaled(self.size())
-        self.point = QPoint(0, 0)
+        self.__imgPoint = QPoint(0, 0)
         self.wu=23
         self.hu=45
         self.left_click=False
+        self.hasWatcher=False
+        self.setMouseTracking(True)
 
-        # self.setMouseTracking(True)
-        # print('init size', self.img.size())
-        # print('init unit', self.scaleUnit)
         self.initUI()
 
     def initUI(self):
-
         self.setWindowTitle('Image with mouse control')
 
-    def paintEvent(self, e):
-        '''
-        绘图
-        :param e:
-        :return:
-        '''
+    def setLocWatcher(self,x,y,v):
+        self.hasWatcher=True
+        self.x=x
+        self.y=y
+        self.v=v
+
+    def paintEvent(self, QPaintEvent):
+        self.draw_img()
+
+    def draw_img(self):
         painter = QPainter()
         painter.begin(self)
-        self.draw_img(painter)
+        painter.drawPixmap(self.imgPoint, self.scaled_img)
         painter.end()
 
-    def draw_img(self, painter):
-        painter.drawPixmap(self.point, self.scaled_img)
-        self.scaleUnit = self.img.size() / 50
-        # print('paint',self.scaled_img.size())
+    @property
+    def imgPoint(self):
+        return self.__imgPoint
 
-    # def mouseDoubleClickEvent(self, QMouseEvent):
-        # print('double click')
+    @imgPoint.setter
+    def imgPoint(self,newImgPoint:QPoint):
+        maxX=0
+        minX=self.width()-self.scaled_img.width()
+        maxY=0
+        minY=self.height()-self.scaled_img.height()
+        qp=QPoint(max(min(maxX,newImgPoint.x()),minX),max(min(maxY,newImgPoint.y()),minY))
+        self.__imgPoint=qp
 
+        print(self.__imgPoint)
+        print(self.__imgPoint)
 
     def mouseMoveEvent(self, e):  # 重写移动事件
-        # print('mouse move',e.pos())
-        # print('mouse trach?',self.hasMouseTracking())
+
         if self.left_click:
-            self._endPos = e.pos() - self._startPos
-            self.point = self.point + self._endPos
+            self.pointBias = e.pos() - self._startPos
             self._startPos = e.pos()
+            self.imgPoint = self.imgPoint + self.pointBias
+
             self.repaint()
-        # print('move to ',e.localPos().x())
-
-
-
+        else:
+            if self.hasWatcher:
+                self.x.setText('good')
+                self.x.setText(str(int(e.localPos().x())))
+                self.y.setText(str(int(e.localPos().y())))
 
     def mousePressEvent(self, e):
         if e.button() == Qt.LeftButton:
@@ -100,7 +110,7 @@ class ImageShower(QWidget):
         elif e.button() == Qt.RightButton:
             self.recoverImg()
     def recoverImg(self):
-        self.point = QPoint(0, 0)
+        self.imgPoint = QPoint(0, 0)
         self.scaled_img = self.img.scaled(self.size())
         self.repaint()
 
@@ -109,27 +119,26 @@ class ImageShower(QWidget):
             # 缩小图片
             if self.scaled_img.width()>self.width() and self.scaled_img.height()>self.height():
                 self.scaled_img = self.img.scaled(self.scaled_img.width()-self.wu, self.scaled_img.height()-self.hu)
-                new_w = e.x() - (self.scaled_img.width() * (e.x() - self.point.x())) / (self.scaled_img.width() + self.wu)
-                new_h = e.y() - (self.scaled_img.height() * (e.y() - self.point.y())) / (self.scaled_img.height() + self.hu)
+                new_w = e.x() - (self.scaled_img.width() * (e.x() - self.imgPoint.x())) / (self.scaled_img.width() + self.wu)
+                new_h = e.y() - (self.scaled_img.height() * (e.y() - self.imgPoint.y())) / (self.scaled_img.height() + self.hu)
                 if self.scaled_img.size()==self.size():
                     self.recoverImg()
                 else:
-                    self.point = QPoint(new_w, new_h)
+                    self.imgPoint = QPoint(new_w, new_h)
                     self.repaint()
         elif e.angleDelta().y() < 0:
             # 放大图片
             self.scaled_img = self.img.scaled(self.scaled_img.width()+self.wu, self.scaled_img.height()+self.hu)
-            new_w = e.x() - (self.scaled_img.width() * (e.x() - self.point.x())) / (self.scaled_img.width() - self.wu)
-            new_h = e.y() - (self.scaled_img.height() * (e.y() - self.point.y())) / (self.scaled_img.height() - self.hu)
-            # print('rescaled:', self.scaled_img.width() - self.wu,
-            #       self.scaled_img.height() - self.hu)
-            self.point = QPoint(new_w, new_h)
+            new_w = e.x() - (self.scaled_img.width() * (e.x() - self.imgPoint.x())) / (self.scaled_img.width() - self.wu)
+            new_h = e.y() - (self.scaled_img.height() * (e.y() - self.imgPoint.y())) / (self.scaled_img.height() - self.hu)
+
+            self.imgPoint = QPoint(new_w, new_h)
             self.repaint()
 
     def resizeEvent(self, e):
         if self.parent is not None:
             self.scaled_img = self.img.scaled(self.size())
-            self.point = QPoint(0, 0)
+            self.imgPoint = QPoint(0, 0)
             self.update()
 
 if __name__ == '__main__':
