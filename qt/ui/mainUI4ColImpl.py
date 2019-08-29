@@ -22,12 +22,16 @@ code is far away from bugs with the god animal protecting
 from qt.ui.mainUI4Col import  Ui_MainWindow
 from qt.com.ImageShower import ImageShower
 from typing import List
+ILabelW=230
+ILabelH = 450
 class mainWindowImp(Ui_MainWindow):
+
+
     def setupUi(self, MainWindow,ctPath=r'E:\pyWorkspace\stevenUI\res\ct.tif',suvPath=r'E:\pyWorkspace\stevenUI\res\suv.tif',
                 gtPath=r'E:\pyWorkspace\stevenUI\res\gt.bmp',prePath=r'E:\pyWorkspace\stevenUI\res\pre.bmp'):
         super().setupUi(MainWindow)
         self.ctILabel = ImageShower(self.mFrame, imagePath=ctPath)
-        self.ctILabel.setGeometry(QtCore.QRect(60, 50, 230, 450))
+        self.ctILabel.setGeometry(QtCore.QRect(60, 50, ILabelW, ILabelH))
         font = QtGui.QFont()
         font.setPointSize(15)
         self.ctILabel.setFont(font)
@@ -36,7 +40,7 @@ class mainWindowImp(Ui_MainWindow):
         self.ctILabel.setLocWatcher(self.xLab,self.yLab,self.ctLab)
 
         self.petILabel = ImageShower(self.mFrame, imagePath=suvPath)
-        self.petILabel.setGeometry(QtCore.QRect(310, 50, 230, 450))
+        self.petILabel.setGeometry(QtCore.QRect(310, 50, 230, ILabelH))
         font = QtGui.QFont()
         font.setPointSize(15)
         self.petILabel.setFont(font)
@@ -45,7 +49,7 @@ class mainWindowImp(Ui_MainWindow):
         self.petILabel.setLocWatcher(self.xLab, self.yLab, self.petLab)
 
         self.gtSegILabel = ImageShower(self.mFrame, imagePath=prePath)
-        self.gtSegILabel.setGeometry(QtCore.QRect(560, 50, 230, 450))
+        self.gtSegILabel.setGeometry(QtCore.QRect(560, 50, ILabelW, ILabelH))
         font = QtGui.QFont()
         font.setPointSize(15)
         self.gtSegILabel.setFont(font)
@@ -53,7 +57,7 @@ class mainWindowImp(Ui_MainWindow):
         self.gtSegILabel.setObjectName("gtSegILabel")
 
         self.gtSegILabel_2 = ImageShower(self.mFrame, imagePath=gtPath)
-        self.gtSegILabel_2.setGeometry(QtCore.QRect(810, 50, 230, 450))
+        self.gtSegILabel_2.setGeometry(QtCore.QRect(810, 50, ILabelW, ILabelH))
         font = QtGui.QFont()
         font.setPointSize(15)
         self.gtSegILabel_2.setFont(font)

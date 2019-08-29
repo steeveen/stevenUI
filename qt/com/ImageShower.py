@@ -27,6 +27,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from typing import List
+from PyQt5.QtCore import QRect
 
 
 class Main(QWidget):
@@ -41,12 +42,14 @@ class ImageShower(QWidget):
 
     def __init__(self, parent=None, imagePath=r'E:\pyWorkspace\stevenUI\res\ct.tif'):
         super().__init__(parent)
+        print(' init ')
         self.parent = parent
         self.img = QPixmap(imagePath)
         self.scaled_img = self.img.scaled(self.size())
         self.__imgPoint = QPoint(0, 0)
-        self.wu = 23
-        self.hu = 45
+
+        self.setScaleUnit(self.width(),self.height())
+
         # self.v=0用于测试label框中的数值的
         self.leftClick = False
 
@@ -56,7 +59,21 @@ class ImageShower(QWidget):
         self.setMouseTracking(True)
 
         self.initUI()
+  
+    def updateGeometry(self):
+        print('call undate geo')
 
+    def setScaleUnit(self,width,height):
+        self.wu = width//10
+        self.hu = height//10
+    def setGeometry(self, *geo):
+        if len(geo)==1:
+            rect=geo[0]
+            self.setScaleUnit(rect.width(),rect.height())
+        else:
+            # TODO 传入的是四个int值
+            pass
+        super().setGeometry(*geo)
 
     def initUI(self):
         self.setWindowTitle('Image with mouse control')
@@ -93,8 +110,6 @@ class ImageShower(QWidget):
         minY = self.height() - self.scaled_img.height()
         self.__imgPoint = QPoint(max(min(maxX, newImgPoint.x()), minX), max(min(maxY, newImgPoint.y()), minY))
 
-        print(self.__imgPoint)
-        print(self.__imgPoint)
 
     def mouseMoveEvent(self, e):  # 重写移动事件
 
@@ -117,7 +132,7 @@ class ImageShower(QWidget):
         elif e.button() == Qt.RightButton:
             self.recoverImg()
             self.recoverFriendWatcher()
-   
+
     def wheelEvent(self, e):
         if e.angleDelta().y() > 0:
             zoom = -1
