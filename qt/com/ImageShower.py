@@ -117,7 +117,7 @@ class ImageShower(QWidget):
         elif e.button() == Qt.RightButton:
             self.recoverImg()
             self.recoverFriendWatcher()
-
+   
     def wheelEvent(self, e):
         if e.angleDelta().y() > 0:
             zoom = -1
