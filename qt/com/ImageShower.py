@@ -26,6 +26,7 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from typing import List
 
 
 class Main(QWidget):
@@ -56,6 +57,7 @@ class ImageShower(QWidget):
 
         self.initUI()
 
+
     def initUI(self):
         self.setWindowTitle('Image with mouse control')
 
@@ -65,9 +67,9 @@ class ImageShower(QWidget):
         self.y = y
         self.v = v
 
-    def setFriendWatcher(self, showers):
+    def setFriendWatcher(self, showers:List['ImageShower']):
         self.hasFriendWatcher = True
-        self.friendsWatcher = showers
+        self.friendsWatchers = showers
 
     def changeFriendWatcher(self):
         if self.hasFriendWatcher:
@@ -121,6 +123,8 @@ class ImageShower(QWidget):
         elif e.angleDelta().y() < 0:
             zoom = 1
         self.rescaleImg(zoom, e.pos().x(), e.pos().y())
+        self.rescaleFriendWather(zoom, e.pos().x(), e.pos().y())
+
 
 
     def resizeEvent(self, e):
@@ -176,8 +180,11 @@ class ImageShower(QWidget):
             self.v.setText(str(0))
             # TODO 显示数值
 
-    def updateFriendWather(self):
-        pass
+    def rescaleFriendWather(self,zoom,x,y):
+        if self.hasFriendWatcher:
+            for shower in self.friendsWatchers:
+                shower.rescaleImg(zoom,x,y)
+
 
 
 if __name__ == '__main__':

@@ -21,6 +21,7 @@ code is far away from bugs with the god animal protecting
 '''
 from qt.ui.mainUI4Col import  Ui_MainWindow
 from qt.com.ImageShower import ImageShower
+from typing import List
 class mainWindowImp(Ui_MainWindow):
     def setupUi(self, MainWindow,ctPath=r'E:\pyWorkspace\stevenUI\res\ct.tif',suvPath=r'E:\pyWorkspace\stevenUI\res\suv.tif',
                 gtPath=r'E:\pyWorkspace\stevenUI\res\gt.bmp',prePath=r'E:\pyWorkspace\stevenUI\res\pre.bmp'):
@@ -58,6 +59,16 @@ class mainWindowImp(Ui_MainWindow):
         self.gtSegILabel_2.setFont(font)
         self.gtSegILabel_2.setStyleSheet("background-color:#0000aa")
         self.gtSegILabel_2.setObjectName("gtSegILabel_2")
+
+        def makeFriendShower(friends:List[ImageShower]):
+            '''
+            将几个ImageShower互相添加友视图
+            :param friends:
+            :return:
+            '''
+            for shower in friends:
+                shower.setFriendWatcher([i for i in friends if i !=shower])
+        makeFriendShower([self.ctILabel,self.petILabel,self.gtSegILabel,self.gtSegILabel_2])
 
 from PyQt5 import QtCore,QtGui,QtWidgets
 if __name__ == '__main__':
