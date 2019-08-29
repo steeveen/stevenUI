@@ -102,7 +102,7 @@ class ImageShower(QWidget):
             pointBias = e.pos() - self._startPos
             self._startPos = e.pos()
             self.moveImg(pointBias)
-
+            self.moveFriendWatcher(pointBias)
         else:
             self.updateLocWatcher(int(e.pos().x()), int(e.pos().y()))
 
@@ -116,6 +116,7 @@ class ImageShower(QWidget):
             self.leftClick = False
         elif e.button() == Qt.RightButton:
             self.recoverImg()
+            self.recoverFriendWatcher()
 
     def wheelEvent(self, e):
         if e.angleDelta().y() > 0:
@@ -184,7 +185,16 @@ class ImageShower(QWidget):
         if self.hasFriendWatcher:
             for shower in self.friendsWatchers:
                 shower.rescaleImg(zoom,x,y)
-
+    def moveFriendWatcher(self,pointBias):
+        if self.hasFriendWatcher:
+            for shower in self.friendsWatchers:
+                shower.moveImg(pointBias)
+    def recoverFriendWatcher(self):
+        if self.hasFriendWatcher:
+            for shower in self.friendsWatchers:
+                shower.imgPoint=QPoint(0,0)
+                shower.scaled_img=shower.img.scaled(shower.size())
+                shower.repaint()
 
 
 if __name__ == '__main__':
