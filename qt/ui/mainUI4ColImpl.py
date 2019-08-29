@@ -41,6 +41,7 @@ class mainWindowImp(Ui_MainWindow):
         self.petILabel.setFont(font)
         self.petILabel.setStyleSheet("background-color:#aaaaaa")
         self.petILabel.setObjectName("petILabel")
+        self.petILabel.setLocWatcher(self.xLab, self.yLab, self.petLab)
 
         self.gtSegILabel = ImageShower(self.mFrame, imagePath=prePath)
         self.gtSegILabel.setGeometry(QtCore.QRect(560, 50, 230, 450))
