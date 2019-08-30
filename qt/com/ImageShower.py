@@ -48,6 +48,9 @@ class ImageShower(QWidget):
         self.scaled_img = self.img.scaled(self.size())
         self.__imgPoint = QPoint(0, 0)
 
+        self.mouseX=0
+        self.mouseY=0
+
         self.setScaleUnit(self.width(),self.height())
 
         # self.v=0用于测试label框中的数值的
@@ -97,6 +100,16 @@ class ImageShower(QWidget):
 
     def paintEvent(self, QPaintEvent):
         self.draw_img()
+        self.drawGuideLine()
+    def drawGuideLine(self):
+        painter = QPainter()
+        painter.begin(self)
+        painter.drawLine(QPoint(0,self.mouseY),QPoint(self.width(),self.mouseY))
+        painter.drawLine(QPoint( self.mouseX,0), QPoint( self.mouseX,self.height()))
+        painter.end()
+
+
+
 
     @property
     def imgPoint(self):
@@ -120,6 +133,7 @@ class ImageShower(QWidget):
             self.moveFriendWatcher(pointBias)
         else:
             self.updateLocWatcher(int(e.pos().x()), int(e.pos().y()))
+            self.moveGuildLine(int(e.pos().x()), int(e.pos().y()))
 
     def mousePressEvent(self, e):
         if e.button() == Qt.LeftButton:
@@ -210,6 +224,11 @@ class ImageShower(QWidget):
                 shower.imgPoint=QPoint(0,0)
                 shower.scaled_img=shower.img.scaled(shower.size())
                 shower.repaint()
+
+    def moveGuildLine(self,mouseX,mouseY):
+        self.mouseX=mouseX
+        self.mouseY=mouseY
+        self.repaint()
 
 
 if __name__ == '__main__':
