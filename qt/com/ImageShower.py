@@ -27,7 +27,10 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from typing import List
+from skimage import io as skio
+import  numpy as np
 from PyQt5.QtCore import QRect
+import qimage2ndarray
 
 
 class Main(QWidget):
@@ -46,7 +49,8 @@ class ImageShower(QWidget):
         self.parent = parent
         self.setMouseTracking(True)
 
-        self.img = QPixmap(imagePath)#原图
+        # self.img = QPixmap(imagePath)#原图
+        self.loadImg(imagePath)
         self.scaled_img = self.img.scaled(self.size())#经过放缩后显示的图
         self.__imgPoint = QPoint(0, 0)#图像的起始点，拖拽和放缩的时候用
         self.setScaleUnit(self.width(), self.height())  # 初始化放缩的单位大小
@@ -65,6 +69,12 @@ class ImageShower(QWidget):
         # self.v=0用于测试label框中的数值的
 
         self.initUI()
+
+    def loadImg(self,path):
+        imgNp=skio.imread(path)
+        print(imgNp.shape)
+        print(imgNp.dtype)
+        self.img = QPixmap(qimage2ndarray.array2qimage(imgNp))
 
 
     @property
