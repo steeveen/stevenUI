@@ -44,71 +44,27 @@ class ImageShower(QWidget):
         super().__init__(parent)
         print(' init ')
         self.parent = parent
-        self.img = QPixmap(imagePath)
-        self.scaled_img = self.img.scaled(self.size())
-        self.__imgPoint = QPoint(0, 0)
-
-        self.mouseX=0
-        self.mouseY=0
-
-        self.setScaleUnit(self.width(),self.height())
-
-        # self.v=0用于测试label框中的数值的
-        self.leftClick = False
-
-        self.hasLocWatcher = False
-        self.hasFriendWatcher = False
-
         self.setMouseTracking(True)
 
+        self.img = QPixmap(imagePath)#原图
+        self.scaled_img = self.img.scaled(self.size())#经过放缩后显示的图
+        self.__imgPoint = QPoint(0, 0)#图像的起始点，拖拽和放缩的时候用
+        self.setScaleUnit(self.width(), self.height())  # 初始化放缩的单位大小
+
+        self.guideLineX=0#引导线X坐标
+        self.guideLineY=0#引导线Y坐标
+        self.guideLineColor='#88FF34B3'#引导线颜色 ARGB
+        self.guideLineThickness=1.5#引导线粗细
+
+        self.painter = QPainter()#绘制引导线、更新显示图所使用的画笔
+
+        self.leftClick = False#左键是否点击了，区分鼠标是拖拽还是滑动时使用
+        self.hasLocWatcher = False#位置以及值的监控控件是否已经设置
+        self.hasFriendWatcher = False#联动的控件是否已经设置
+
+        # self.v=0用于测试label框中的数值的
+
         self.initUI()
-  
-    def updateGeometry(self):
-        print('call undate geo')
-
-    def setScaleUnit(self,width,height):
-        self.wu = width//10
-        self.hu = height//10
-    def setGeometry(self, *geo):
-        if len(geo)==1:
-            rect=geo[0]
-            self.setScaleUnit(rect.width(),rect.height())
-        else:
-            # TODO 传入的是四个int值
-            pass
-        super().setGeometry(*geo)
-
-    def initUI(self):
-        self.setWindowTitle('Image with mouse control')
-
-    def setLocWatcher(self, x, y, v):
-        self.hasLocWatcher = True
-        self.x = x
-        self.y = y
-        self.v = v
-
-    def setFriendWatcher(self, showers:List['ImageShower']):
-        self.hasFriendWatcher = True
-        self.friendsWatchers = showers
-
-    def changeFriendWatcher(self):
-        if self.hasFriendWatcher:
-            # for _shower in self.friendsWatcher:
-            #     self.imgPoint=self.imgPoint
-            #     self.sca
-            pass
-
-    def paintEvent(self, QPaintEvent):
-        self.draw_img()
-        self.drawGuideLine()
-    def drawGuideLine(self):
-        painter = QPainter()
-        painter.begin(self)
-        painter.drawLine(QPoint(0,self.mouseY),QPoint(self.width(),self.mouseY))
-        painter.drawLine(QPoint( self.mouseX,0), QPoint( self.mouseX,self.height()))
-        painter.end()
-
-
 
 
     @property
@@ -123,17 +79,60 @@ class ImageShower(QWidget):
         minY = self.height() - self.scaled_img.height()
         self.__imgPoint = QPoint(max(min(maxX, newImgPoint.x()), minX), max(min(maxY, newImgPoint.y()), minY))
 
+    def setScaleUnit(self,width,height):
+        self.wu = width//10
+        self.hu = height//10
+
+    def setGeometry(self, *geo):
+        if len(geo)==1:
+            rect=geo[0]
+            self.setScaleUnit(rect.width(),rect.height())
+        else:
+            # TODO 传入的是四个int值
+            pass
+        super().setGeometry(*geo)
+
+    def setLocWatcher(self, x, y, v):
+        self.hasLocWatcher = True
+        self.x = x
+        self.y = y
+        self.v = v
+
+    def setFriendWatcher(self, showers:List['ImageShower']):
+        self.hasFriendWatcher = True
+        self.friendsWatchers = showers
+
+
+    def initUI(self):
+        self.setWindowTitle('Image with mouse control')
+
+
+    def paintEvent(self, QPaintEvent):
+        self.painter.begin(self)
+        self.drawImg()
+        self.drawGuideLine()
+        self.painter.end()
+
+    def drawImg(self):
+        self.painter.drawPixmap(self.imgPoint, self.scaled_img)
+
+    def drawGuideLine(self):
+        self.painter.setPen(QPen(QColor(self.guideLineColor),self.guideLineThickness))
+        self.painter.drawLine(QPoint(0, self.guideLineY), QPoint(self.width(), self.guideLineY))
+        self.painter.drawLine(QPoint(self.guideLineX, 0), QPoint(self.guideLineX, self.height()))
+
+
 
     def mouseMoveEvent(self, e):  # 重写移动事件
-
         if self.leftClick:
             pointBias = e.pos() - self._startPos
             self._startPos = e.pos()
-            self.moveImg(pointBias)
-            self.moveFriendWatcher(pointBias)
+            self.prepareMoveImg(pointBias)
+            self.prepareMoveFriendWatcherImg(pointBias)
         else:
             self.updateLocWatcher(int(e.pos().x()), int(e.pos().y()))
-            self.moveGuildLine(int(e.pos().x()), int(e.pos().y()))
+        self.prepareMoveGuildLine(int(e.pos().x()), int(e.pos().y()))
+        self.prepareMoveFriendGuildLine(int(e.pos().x()), int(e.pos().y()))
 
     def mousePressEvent(self, e):
         if e.button() == Qt.LeftButton:
@@ -144,17 +143,80 @@ class ImageShower(QWidget):
         if e.button() == Qt.LeftButton:
             self.leftClick = False
         elif e.button() == Qt.RightButton:
-            self.recoverImg()
-            self.recoverFriendWatcher()
+            self.prepareRecoverImg()
+            self.prepareRecoverFriendWatcherImg()
 
     def wheelEvent(self, e):
         if e.angleDelta().y() > 0:
             zoom = -1
         elif e.angleDelta().y() < 0:
             zoom = 1
-        self.rescaleImg(zoom, e.pos().x(), e.pos().y())
-        self.rescaleFriendWather(zoom, e.pos().x(), e.pos().y())
+        self.prepareZoomImg(zoom, e.pos().x(), e.pos().y())
+        self.prepareZoomFriendWatcherImg(zoom, e.pos().x(), e.pos().y())
 
+
+    def prepareRecoverImg(self):
+        self.imgPoint = QPoint(0, 0)
+        self.scaled_img = self.img.scaled(self.size())
+        self.repaint()
+
+    def prepareRecoverFriendWatcherImg(self):
+        if self.hasFriendWatcher:
+            for shower in self.friendsWatchers:
+                shower.prepareRecoverImg()
+
+    def prepareMoveImg(self, pointBias):
+        self.imgPoint = self.imgPoint + pointBias
+        self.repaint()
+
+    def prepareMoveFriendWatcherImg(self, pointBias):
+        if self.hasFriendWatcher:
+            for shower in self.friendsWatchers:
+                shower.prepareMoveImg(pointBias)
+
+    def prepareZoomImg(self, zoom, x, y):
+        if zoom > 0:  # 放大图片
+            self.scaled_img = self.img.scaled(self.scaled_img.width() + self.wu, self.scaled_img.height() + self.hu)
+            new_w = x - (self.scaled_img.width() * (x - self.imgPoint.x())) / (
+                    self.scaled_img.width() - self.wu)
+            new_h = y - (self.scaled_img.height() * (y - self.imgPoint.y())) / (
+                    self.scaled_img.height() - self.hu)
+            self.imgPoint = QPoint(new_w, new_h)
+            self.repaint()
+        elif zoom < 0:
+            # 缩小图片
+            if self.scaled_img.width() > self.width() \
+                    and self.scaled_img.size() != self.size():#当视图比控件大的时候才可以缩小
+                self.scaled_img = self.img.scaled(self.scaled_img.width() - self.wu, self.scaled_img.height() - self.hu)
+                new_w = x - (self.scaled_img.width() * (x - self.imgPoint.x())) / (
+                        self.scaled_img.width() + self.wu)
+                new_h = y - (self.scaled_img.height() * (y - self.imgPoint.y())) / (
+                        self.scaled_img.height() + self.hu)
+                self.imgPoint = QPoint(new_w, new_h)
+                self.repaint()
+
+    def prepareZoomFriendWatcherImg(self, zoom, x, y):
+        if self.hasFriendWatcher:
+            for shower in self.friendsWatchers:
+                shower.prepareZoomImg(zoom, x, y)
+
+    def prepareMoveGuildLine(self, mouseX, mouseY):
+        self.guideLineX = mouseX
+        self.guideLineY = mouseY
+        self.repaint()
+
+    def prepareMoveFriendGuildLine(self,mouseX,mouseY):
+        if self.hasFriendWatcher:
+            for shower in self.friendsWatchers:
+                shower.prepareMoveGuildLine(mouseX,mouseY)
+
+
+    def updateLocWatcher(self, x, y):
+        if self.hasLocWatcher:
+            self.x.setText(str(x))
+            self.y.setText(str(y))
+            self.v.setText(str(0))
+            # TODO 显示数值
 
 
     def resizeEvent(self, e):
@@ -164,71 +226,12 @@ class ImageShower(QWidget):
             self.imgPoint = QPoint(0, 0)
             self.update()
 
-    def draw_img(self):
-        painter = QPainter()
-        painter.begin(self)
-        painter.drawPixmap(self.imgPoint, self.scaled_img)
-        painter.end()
 
-    def recoverImg(self):
-        self.imgPoint = QPoint(0, 0)
-        self.scaled_img = self.img.scaled(self.size())
-        self.repaint()
 
-    def moveImg(self, pointBias):
-        self.imgPoint = self.imgPoint + pointBias
-        self.repaint()
 
-    def rescaleImg(self, zoom, x, y):
-        if zoom > 0:  # 放大图片
-            self.scaled_img = self.img.scaled(self.scaled_img.width() + self.wu, self.scaled_img.height() + self.hu)
-            new_w = x - (self.scaled_img.width() * (x - self.imgPoint.x())) / (
-                    self.scaled_img.width() - self.wu)
-            new_h = y - (self.scaled_img.height() * (y - self.imgPoint.y())) / (
-                    self.scaled_img.height() - self.hu)
 
-            self.imgPoint = QPoint(new_w, new_h)
-            self.repaint()
-        elif zoom < 0:
-            # 缩小图片
-            if self.scaled_img.width() > self.width() and self.scaled_img.height() > self.height():
-                self.scaled_img = self.img.scaled(self.scaled_img.width() - self.wu, self.scaled_img.height() - self.hu)
-                new_w = x - (self.scaled_img.width() * (x - self.imgPoint.x())) / (
-                        self.scaled_img.width() + self.wu)
-                new_h = y - (self.scaled_img.height() * (y - self.imgPoint.y())) / (
-                        self.scaled_img.height() + self.hu)
-                if self.scaled_img.size() == self.size():
-                    self.recoverImg()
-                else:
-                    self.imgPoint = QPoint(new_w, new_h)
-                    self.repaint()
 
-    def updateLocWatcher(self, x, y):
-        if self.hasLocWatcher:
-            self.x.setText(str(x))
-            self.y.setText(str(y))
-            self.v.setText(str(0))
-            # TODO 显示数值
 
-    def rescaleFriendWather(self,zoom,x,y):
-        if self.hasFriendWatcher:
-            for shower in self.friendsWatchers:
-                shower.rescaleImg(zoom,x,y)
-    def moveFriendWatcher(self,pointBias):
-        if self.hasFriendWatcher:
-            for shower in self.friendsWatchers:
-                shower.moveImg(pointBias)
-    def recoverFriendWatcher(self):
-        if self.hasFriendWatcher:
-            for shower in self.friendsWatchers:
-                shower.imgPoint=QPoint(0,0)
-                shower.scaled_img=shower.img.scaled(shower.size())
-                shower.repaint()
-
-    def moveGuildLine(self,mouseX,mouseY):
-        self.mouseX=mouseX
-        self.mouseY=mouseY
-        self.repaint()
 
 
 if __name__ == '__main__':
