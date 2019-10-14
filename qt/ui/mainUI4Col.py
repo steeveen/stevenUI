@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainUI4Col.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.10.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -238,6 +238,11 @@ class Ui_MainWindow(object):
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
+        self.saveResult = QtWidgets.QAction(MainWindow)
+        self.saveResult.setObjectName("saveResult")
+        self.actionTest = QtWidgets.QAction(MainWindow)
+        self.actionTest.setObjectName("actionTest")
+        self.menu.addAction(self.saveResult)
         self.menubar.addAction(self.menu.menuAction())
         self.menubar.addAction(self.menu_2.menuAction())
         self.menubar.addAction(self.menu_3.menuAction())
@@ -250,7 +255,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.ctLabel.setText(_translate("MainWindow", "CT"))
         self.petLabel.setText(_translate("MainWindow", "PET"))
-        self.gtSegLabel.setText(_translate("MainWindow", "Segmentation"))
+        self.gtSegLabel.setText(_translate("MainWindow", "自动分割结果"))
         self.groupBox.setTitle(_translate("MainWindow", "患者信息"))
         self.label.setText(_translate("MainWindow", "姓名："))
         self.label_2.setText(_translate("MainWindow", "性别："))
@@ -278,8 +283,20 @@ class Ui_MainWindow(object):
         self.label_19.setText(_translate("MainWindow", "high"))
         self.label_4.setText(_translate("MainWindow", "slice\n"
 "Index"))
-        self.gtSegLabel_2.setText(_translate("MainWindow", "GT"))
+        self.gtSegLabel_2.setText(_translate("MainWindow", "手动分割"))
         self.menu.setTitle(_translate("MainWindow", "文件"))
         self.menu_2.setTitle(_translate("MainWindow", "编辑"))
         self.menu_3.setTitle(_translate("MainWindow", "帮助"))
+        self.saveResult.setText(_translate("MainWindow", "保存分割结果"))
+        self.actionTest.setText(_translate("MainWindow", "test"))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())
 

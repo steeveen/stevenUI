@@ -22,9 +22,11 @@ code is far away from bugs with the god animal protecting
 from qt.ui.mainUI4Col import  Ui_MainWindow
 from qt.com.ImageShower import ImageShower
 from typing import List
+from skimage import io as skio
+from PyQt5.QtWidgets import QFileDialog,QWidget
 ILabelW=230
 ILabelH = 450
-class mainWindowImp(Ui_MainWindow):
+class mainWindowImp(Ui_MainWindow,QWidget):
 
 
     def setupUi(self, MainWindow,ctPath=r'E:\pyWorkspace\stevenUI\res\ct.tif',suvPath=r'E:\pyWorkspace\stevenUI\res\suv.tif',
@@ -64,6 +66,13 @@ class mainWindowImp(Ui_MainWindow):
         self.gtSegILabel_2.setStyleSheet("background-color:#0000aa")
         self.gtSegILabel_2.setObjectName("gtSegILabel_2")
 
+        def saveResult():
+            filename = QFileDialog.getExistingDirectory(self, '选取文件夹', r'E:\test')
+            print('filename', filename)
+            skio.imsave(os.path.join(filename,'1.png'),self.gtSegILabel.imgNp)
+            # with open(filename, 'w') as f:
+            #     print(self.gtSegLabel.img)
+
         def makeFriendShower(friends:List[ImageShower]):
             '''
             将几个ImageShower互相添加友视图
@@ -72,7 +81,12 @@ class mainWindowImp(Ui_MainWindow):
             '''
             for shower in friends:
                 shower.setFriendWatcher([i for i in friends if i !=shower])
+
+        self.saveResult.triggered.connect(saveResult)
         makeFriendShower([self.ctILabel,self.petILabel,self.gtSegILabel,self.gtSegILabel_2])
+
+
+
 
 from PyQt5 import QtCore,QtGui,QtWidgets
 if __name__ == '__main__':

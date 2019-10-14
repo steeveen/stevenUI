@@ -80,7 +80,7 @@
       <string notr="true">background-color:#bbbbbb</string>
      </property>
      <property name="text">
-      <string>Segmentation</string>
+      <string>自动分割结果</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -731,7 +731,7 @@ Index</string>
       <string notr="true">background-color:#bbbbbb</string>
      </property>
      <property name="text">
-      <string>GT</string>
+      <string>手动分割</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -776,6 +776,7 @@ Index</string>
     <property name="title">
      <string>文件</string>
     </property>
+    <addaction name="saveResult"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
@@ -792,6 +793,16 @@ Index</string>
    <addaction name="menu_3"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="saveResult">
+   <property name="text">
+    <string>保存分割结果</string>
+   </property>
+  </action>
+  <action name="actionTest">
+   <property name="text">
+    <string>test</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
