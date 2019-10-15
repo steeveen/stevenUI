@@ -46,6 +46,7 @@ class ImageShower(QWidget):
     def __init__(self, parent=None, imagePath=r'E:\pyWorkspace\stevenUI\res\ct.tif'):
         super().__init__(parent)
         print(' init ')
+
         self.parent = parent
         self.setMouseTracking(True)
 
@@ -69,7 +70,7 @@ class ImageShower(QWidget):
         self.hasLocWatcher = False  # 位置以及值的监控控件是否已经设置
         self.hasFriendWatcher = False  # 联动的控件是否已经设置
 
-        # self.v=0用于测试label框中的数值的
+        self.ctrlDown = False
 
         self.initUI()
 
@@ -163,16 +164,42 @@ class ImageShower(QWidget):
         self.painter.drawLine(QPoint(0, self.guideLineY), QPoint(self.width(), self.guideLineY))
         self.painter.drawLine(QPoint(self.guideLineX, 0), QPoint(self.guideLineX, self.height()))
 
-    def mouseMoveEvent(self, e):  # 重写移动事件
+    def enterEvent(self, QEvent):
+        self.grabKeyboard()
 
-        if self.leftClick:
-            pointBias = e.pos() - self._startPos
-            self._startPos = e.pos()
-            self.prepareMoveImg(pointBias)
-            self.prepareMoveFriendWatcherImg(pointBias)
+    def leaveEvent(self, QEvent):
+        self.releaseKeyboard()
+
+    def keyPressEvent(self, event):
+        if event.modifiers() == Qt.ControlModifier:
+            self.ctrlDown = True
+        print('press ctrl', self.ctrlDown)
+
+    def keyReleaseEvent(self, event):
+        if event.modifiers() != Qt.ControlModifier:
+            self.ctrlDown = False
+        print('release ctrl', self.ctrlDown)
+
+    def mouseMoveNoCtrl(self,e):
+        '''
+        不按ctrl的操作，子类可以继承
+        :param e:
+        :return:
+        '''
+        print('mouse move no ctrl',e)
+
+    def mouseMoveEvent(self, e):  # 重写移动事件
+        if self.leftClick :
+            if self.ctrlDown:#按下ctrl同时拖拽鼠标表示移动
+                pointBias = e.pos() - self._startPos
+                self._startPos = e.pos()
+                self.prepareMoveImg(pointBias)
+                self.prepareMoveFriendWatcherImg(pointBias)
+            else:
+                self.mouseMoveNoCtrl(e)#只移动鼠标，没有按下ctrl键
         else:
 
-            self.updateLocWatcher(int(e.pos().x()), int(e.pos().y()),)
+            self.updateLocWatcher(int(e.pos().x()), int(e.pos().y()), )
             mouseImgPoint = self.mapMouseImgPoint(e.pos())
             self.updateLocValueWatcher(mouseImgPoint)
             self.updateFriendLocValueWatcher(mouseImgPoint)
@@ -259,10 +286,12 @@ class ImageShower(QWidget):
         if self.hasFriendWatcher:
             for shower in self.friendsWatchers:
                 shower.prepareMoveGuildLine(mouseX, mouseY)
+
     def updateLocValueWatcher(self, mouseImgPoint):
         if self.hasLocWatcher:
-            self.v.setText(str(int(self.imgNp[mouseImgPoint.y(),mouseImgPoint.x()])))
-    def updateFriendLocValueWatcher(self,mouseImgPoint):
+            self.v.setText(str(int(self.imgNp[mouseImgPoint.y(), mouseImgPoint.x()])))
+
+    def updateFriendLocValueWatcher(self, mouseImgPoint):
         if self.hasFriendWatcher:
             for friend in self.friendsWatchers:
                 friend.updateLocValueWatcher(mouseImgPoint)

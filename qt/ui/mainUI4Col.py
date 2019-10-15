@@ -250,6 +250,8 @@ class Ui_MainWindow(object):
         self.delSegBtn.setObjectName("delSegBtn")
         self.brushSizeSpi = QtWidgets.QSpinBox(self.mFrame)
         self.brushSizeSpi.setGeometry(QtCore.QRect(880, 540, 42, 20))
+        self.brushSizeSpi.setMinimum(1)
+        self.brushSizeSpi.setMaximum(30)
         self.brushSizeSpi.setProperty("value", 3)
         self.brushSizeSpi.setObjectName("brushSizeSpi")
         self.label_5 = QtWidgets.QLabel(self.mFrame)

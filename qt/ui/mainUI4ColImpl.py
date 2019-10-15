@@ -90,7 +90,7 @@ class mainWindowImp(Ui_MainWindow, QWidget):
         self.saveResult.triggered.connect(saveResult)
         makeFriendShower([self.ctILabel, self.petILabel, self.gtSegILabel, self.gtSegILabel_2])
 
-   
+
         def addSegListener():
             if self.addSegBtn.isChecked():
                 self.delSegBtn.setChecked(False)
@@ -106,6 +106,16 @@ class mainWindowImp(Ui_MainWindow, QWidget):
         self.addSegBtn.clicked.connect(addSegListener)
         self.delSegBtn.clicked.connect(delSegListener)
 
+        self.brushSizeSpi.setValue(self.gtSegILabel_2.brushSize)
+        def spinChangeListener():
+            self.gtSegILabel_2.updateDrawerSize(self.brushSizeSpi.value())
+        self.brushSizeSpi.valueChanged.connect(spinChangeListener)
+
+
+    # def keyPressEvent(self, event):
+    #     print('press',str(event.key()))
+    # def keyReleaseEvent(self, event):
+    #     print('press',str(event.key()))
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 

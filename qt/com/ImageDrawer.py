@@ -29,6 +29,7 @@ class ImageDrawer(ImageShower):
 
     def updateDrawerSize(self,size):
         self.brushSize=size
+        print('size type',type(size))
         print('drawer size',size)
 
 
