@@ -105,7 +105,8 @@ class ImageShower(QWidget):
         return QPoint(int(imgX), int(imgY))
 
     def loadImg(self, path):
-        self.imgNp = skio.imread(path)
+        imgNp=skio.imread(path)
+        self.imgNp = np.stack([imgNp,imgNp,imgNp],axis=2)
         print(self.imgNp.shape)
         print(self.imgNp.dtype)
         self.img = QPixmap(qimage2ndarray.array2qimage(self.imgNp))
@@ -180,25 +181,24 @@ class ImageShower(QWidget):
             self.ctrlDown = False
         print('release ctrl', self.ctrlDown)
 
-    def mouseMoveNoCtrl(self,e):
+    def mouseDragNoCtrl(self, e):
         '''
         不按ctrl的操作，子类可以继承
         :param e:
         :return:
         '''
-        print('mouse move no ctrl',e)
+        print('mouse move no ctrl', e)
 
     def mouseMoveEvent(self, e):  # 重写移动事件
-        if self.leftClick :
-            if self.ctrlDown:#按下ctrl同时拖拽鼠标表示移动
+        if self.leftClick:
+            if self.ctrlDown:  # 按下ctrl同时拖拽鼠标表示移动
                 pointBias = e.pos() - self._startPos
                 self._startPos = e.pos()
                 self.prepareMoveImg(pointBias)
                 self.prepareMoveFriendWatcherImg(pointBias)
             else:
-                self.mouseMoveNoCtrl(e)#只移动鼠标，没有按下ctrl键
+                self.mouseDragNoCtrl(e)  # 只移动鼠标，没有按下ctrl键
         else:
-
             self.updateLocWatcher(int(e.pos().x()), int(e.pos().y()), )
             mouseImgPoint = self.mapMouseImgPoint(e.pos())
             self.updateLocValueWatcher(mouseImgPoint)
@@ -289,7 +289,7 @@ class ImageShower(QWidget):
 
     def updateLocValueWatcher(self, mouseImgPoint):
         if self.hasLocWatcher:
-            self.v.setText(str(int(self.imgNp[mouseImgPoint.y(), mouseImgPoint.x()])))
+            self.v.setText(str(int(self.imgNp[mouseImgPoint.y(), mouseImgPoint.x(),0])))
 
     def updateFriendLocValueWatcher(self, mouseImgPoint):
         if self.hasFriendWatcher:
