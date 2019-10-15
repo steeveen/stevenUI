@@ -127,13 +127,13 @@ class ImageShower(QWidget):
         self.hu = height // 10
 
     def setGeometry(self, *geo):
+        super().setGeometry(*geo)
         if len(geo) == 1:
             rect = geo[0]
             self.setScaleUnit(rect.width(), rect.height())
         else:
             # TODO 传入的是四个int值
             pass
-        super().setGeometry(*geo)
         self.showImgScale = (self.size().width(), self.size().height())
 
     def setLocWatcher(self, x, y, v):
