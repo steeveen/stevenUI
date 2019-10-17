@@ -21,60 +21,76 @@ code is far away from bugs with the god animal protecting
 '''
 import qimage2ndarray
 
-from .ImageShower import ImageShower, QPen, QPainter, Qt, QBrush, QRect, QPixmap
+from .ImageShower import ImageShower, QPen, QPainter, Qt, QBrush, QRect, QPixmap, QSize
 import numpy as np
-class ImageDrawer(ImageShower):
-    def __init__(self,parent=None, imagePath=r'E:\pyWorkspace\stevenUI\res\ct.tif'):
-        super().__init__(parent)
-        print(' init imageDrawer')
-        self.brushDraw=True
-        self.brushSize=3
-        self.mask=np.zeros(self.imgNp.shape)
+from skimage import  draw as skd
+from skimage import io as skio
 
-        self.maskX=0
-        self.maskY=0
+class ImageDrawer(ImageShower):
+    def __init__(self, parent=None, imagePath=r'E:\pyWorkspace\stevenUI\res\ct.tif',maskPath=r'E:\pyWorkspace\stevenUI\res\pre.bmp'):
+        super().__init__(parent,imagePath)
+        print(' init imageDrawer')
+        self.brushDraw = True
+        self.brushSize = 3
+
+        self.alpha=128
+        self.maskNp = (skio.imread(maskPath) > 0).astype(np.uint8)
+        # self.maskNp[:, :, 3] = 0
+
+        self.maskX = 0
+        self.maskY = 0
         # self.
 
-    def updateDrawerSize(self,size):
-        self.brushSize=size
-        print('size type',type(size))
-        print('drawer size',size)
+    def updateDrawerSize(self, size):
+        self.brushSize = size
+        print('size type', type(size))
+        print('drawer size', size)
 
-    def updateDrawerMode(self,draw):
-        if draw==1:
+    def updateDrawerMode(self, draw):
+        if draw == 1:
             print('切换为添加模式')
-        elif draw==-1:
+        elif draw == -1:
             print('切换为删除模式')
         else:
             print('切换为关闭模式')
-        self.brushDraw=draw
+        self.brushDraw = draw
 
-    def prepareMoveMaskCenter(self, mouseX, mouseY):
-        self.maskX = mouseX
-        self.maskY = mouseY
-        print('maskx',self.maskX)
-        print('masky',self.maskY)
+    def prepareMaskImg(self,mouseX, mouseY):
+        cc, rr = skd.circle(mouseX, mouseY, self.brushSize/2)
+        if self.brushDraw==1:
+            skd.set_color(self.maskNp, [rr, cc], 1)
+        elif self.brushDraw==-1:
+            skd.set_color(self.maskNp, [rr, cc],0)
+        self.repaint()
+
+    def setMask(self,mask=None):
+        # if type(mask)==NoneType:
+        #     mask=np.zeros((self.maskNp.shape[0],self.maskNp.shape[1]))
+        self.maskNp = (mask>0).astype(np.uint8)
         self.repaint()
 
     def mouseDragNoCtrl(self, e):
         print('drawer mouse drag')
-        self.prepareMoveMaskCenter(int(e.pos().x()), int(e.pos().y()))
-        # print('rrrrrrrrrrrua')
-        # qp=QPainter(self)
-        # qp.setPen(QPen())
-        # qp.setBrush(QBrush())
-        # qp.drawEllipse(QRect(50,100,300,200))
-        # # qp.setPen(QPen(Qt.blue, 2, Qt.SolidLine))
-        # # qp.drawEllipse(e.pos().x(), e.pos().y(), self.brushSize, self.brushSize)
-        # self.repaint()
+        # self.prepareMoveMaskCenter(int(e.pos().x()), int(e.pos().y()))
+        point=self.mapMouseImgPoint(e.pos())
+        self.prepareMaskImg(point.x(),point.y())
+
+    def mousePressEvent(self, e):
+        super().mousePressEvent(e)
+        if e.button() == Qt.LeftButton and not self.ctrlDown:
+            point = self.mapMouseImgPoint(e.pos())
+            self.prepareMaskImg(point.x(), point.y())
+
+
 
     def drawMask(self):
-        self.maskNp=np.zeros((556, 250, 4))
-        self.maskNp[:,:,0]=255
-        self.maskNp[:,:,3]=128
-        self.painter.drawPixmap(self.imgPoint, QPixmap(qimage2ndarray.array2qimage(self.maskNp)))
-        print('draw mask')
-        pass
+
+        zNp=np.zeros((self.maskNp.shape[0],self.maskNp.shape[1]))
+        showMask=np.stack([self.maskNp*255,zNp,zNp,self.maskNp*self.alpha],axis=2)
+        self.painter.drawPixmap(self.imgPoint, self.np2QPixmap(showMask).scaled(QSize(*self.showImgScale)))
+
+    def getMask(self):
+        return self.maskNp
 
     def paintEvent(self, QPaintEvent):
         self.painter.begin(self)

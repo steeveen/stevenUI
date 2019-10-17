@@ -19,6 +19,7 @@ code is far away from bugs with the god animal protecting
  @Belong = 'stevenUI'  @MadeBy = 'PyCharm'
  @Author = 'steven'   @DateTime = '2019/8/21 14:30'
 '''
+from qt.com.ImageMaskShower import ImageMaskShower
 from qt.ui.mainUI4Col import Ui_MainWindow
 from qt.com.ImageShower import ImageShower
 from qt.com.ImageDrawer import ImageDrawer
@@ -54,16 +55,17 @@ class mainWindowImp(Ui_MainWindow, QWidget):
         self.petILabel.setObjectName("petILabel")
         self.petILabel.setLocWatcher(self.xLab, self.yLab, self.petLab)
 
-        self.gtSegILabel = ImageShower(self.mFrame, imagePath=prePath)
+        self.gtSegILabel = ImageMaskShower(self.mFrame,imagePath=suvPath, maskPath=prePath)
         self.gtSegILabel.setGeometry(QtCore.QRect(560, 50, ILabelW, ILabelH))
         font = QtGui.QFont()
         font.setPointSize(15)
         self.gtSegILabel.setFont(font)
         self.gtSegILabel.setStyleSheet("background-color:#aaaaaa")
         self.gtSegILabel.setObjectName("gtSegILabel")
+        self.gtSegILabel.setLocWatcher(self.xLab, self.yLab, self.maskLab)
 
         # self.gtSegILabel_2 = ImageShower(self.mFrame, imagePath=gtPath)
-        self.gtSegILabel_2 = ImageDrawer(self.mFrame, imagePath=gtPath)
+        self.gtSegILabel_2 = ImageDrawer(self.mFrame, imagePath=suvPath, maskPath=prePath)
         self.gtSegILabel_2.setGeometry(QtCore.QRect(810, 50, ILabelW, ILabelH))
         font = QtGui.QFont()
         font.setPointSize(15)
@@ -74,7 +76,7 @@ class mainWindowImp(Ui_MainWindow, QWidget):
         def saveResult():
             filename = QFileDialog.getExistingDirectory(self, '选取文件夹', r'E:\test')
             print('filename', filename)
-            skio.imsave(os.path.join(filename, '1.png'), self.gtSegILabel.imgNp)
+            skio.imsave(os.path.join(filename, '1.png'), self.gtSegILabel.getMask()*255)
             # with open(filename, 'w') as f:
             #     print(self.gtSegLabel.img)
 
@@ -110,6 +112,18 @@ class mainWindowImp(Ui_MainWindow, QWidget):
         def spinChangeListener():
             self.gtSegILabel_2.updateDrawerSize(self.brushSizeSpi.value())
         self.brushSizeSpi.valueChanged.connect(spinChangeListener)
+
+        def resetSeg2():
+            self.gtSegILabel_2.setMask(self.gtSegILabel.getMask())
+        self.resetSegBtn.clicked.connect(resetSeg2)
+
+        def confSeg2():
+            self.gtSegILabel.setMask(self.gtSegILabel_2.getMask())
+        self.confSegBtn.clicked.connect(confSeg2)
+
+        def recoverSeg():
+            self.gtSegILabel.recoverAutoSeg()
+        self.recoverSegBtn.clicked.connect(recoverSeg)
 
 
     # def keyPressEvent(self, event):

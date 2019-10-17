@@ -80,7 +80,7 @@
       <string notr="true">background-color:#bbbbbb</string>
      </property>
      <property name="text">
-      <string>自动分割结果</string>
+      <string>分割结果</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -731,7 +731,7 @@ Index</string>
       <string notr="true">background-color:#bbbbbb</string>
      </property>
      <property name="text">
-      <string>手动分割</string>
+      <string>分割操作区域</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -858,7 +858,7 @@ Index</string>
       <rect>
        <x>940</x>
        <y>520</y>
-       <width>75</width>
+       <width>41</width>
        <height>31</height>
       </rect>
      </property>
@@ -866,17 +866,30 @@ Index</string>
       <string>确认</string>
      </property>
     </widget>
-    <widget class="QToolButton" name="toolButton">
+    <widget class="QPushButton" name="resetSegBtn">
      <property name="geometry">
       <rect>
-       <x>660</x>
-       <y>510</y>
-       <width>37</width>
-       <height>18</height>
+       <x>990</x>
+       <y>520</y>
+       <width>41</width>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
-      <string>...</string>
+      <string>重置</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="recoverSegBtn">
+     <property name="geometry">
+      <rect>
+       <x>560</x>
+       <y>520</y>
+       <width>231</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>网络自动分割</string>
      </property>
     </widget>
    </widget>

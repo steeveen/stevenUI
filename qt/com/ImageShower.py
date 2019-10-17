@@ -51,9 +51,11 @@ class ImageShower(QWidget):
         self.setMouseTracking(True)
 
         # self.img = QPixmap(imagePath)#原图
-        self.loadImg(imagePath)
+
+        imgNp = skio.imread(imagePath)
+        self.imgNp = np.stack([imgNp, imgNp, imgNp], axis=2)
+
         self.showImgScale = (self.size().width(), self.size().height())
-        self.showImg = self.img.scaled(*self.showImgScale)  # 经过放缩后显示的图
         self.imgPoint = QPoint(0, 0)  # 图像的起始点，拖拽和放缩的时候用
         self.showMousePos = QPoint(0, 0)
 
@@ -90,6 +92,9 @@ class ImageShower(QWidget):
     #     self.showMousePos = QPoint(int(realX), int(realY))
     #     return self.showMousePos
 
+    def np2QPixmap(self,arr):
+        return QPixmap(qimage2ndarray.array2qimage(arr))
+
     def mapMouseImgPoint(self, pos):
         '''
         将鼠标在视图中的位置映射为图像矩阵中的位置
@@ -104,13 +109,9 @@ class ImageShower(QWidget):
         # print('scale y', self.showImgScale[1])
         return QPoint(int(imgX), int(imgY))
 
-    def loadImg(self, path):
-        imgNp=skio.imread(path)
-        self.imgNp = np.stack([imgNp,imgNp,imgNp],axis=2)
-        print(self.imgNp.shape)
-        print(self.imgNp.dtype)
-        self.img = QPixmap(qimage2ndarray.array2qimage(self.imgNp))
-        print('self.img', self.img)
+
+
+
 
     @property
     def imgPoint(self):
@@ -119,9 +120,9 @@ class ImageShower(QWidget):
     @imgPoint.setter
     def imgPoint(self, newImgPoint: QPoint):
         maxX = 0
-        minX = self.width() - self.showImg.width()
+        minX = self.width() - self.showImgScale[0]
         maxY = 0
-        minY = self.height() - self.showImg.height()
+        minY = self.height() - self.showImgScale[1]
         self.__imgPoint = QPoint(max(min(maxX, newImgPoint.x()), minX), max(min(maxY, newImgPoint.y()), minY))
 
     def setScaleUnit(self, width, height):
@@ -158,7 +159,7 @@ class ImageShower(QWidget):
         self.painter.end()
 
     def drawImg(self):
-        self.painter.drawPixmap(self.imgPoint, self.showImg)
+        self.painter.drawPixmap(self.imgPoint,self.np2QPixmap(self.imgNp).scaled(QSize(*self.showImgScale)))
 
     def drawGuideLine(self):
         self.painter.setPen(QPen(QColor(self.guideLineColor), self.guideLineThickness))
@@ -232,7 +233,7 @@ class ImageShower(QWidget):
 
     def prepareRecoverImg(self):
         self.imgPoint = QPoint(0, 0)
-        self.showImg = self.img.scaled(self.size())
+        self.showImgScale=(self.size().width(),self.size().height())
         self.repaint()
 
     def prepareRecoverFriendWatcherImg(self):
@@ -251,24 +252,24 @@ class ImageShower(QWidget):
 
     def prepareZoomImg(self, zoom, x, y):
         if zoom > 0:  # 放大图片
-            self.showImgScale = (self.showImg.width() + self.wu, self.showImg.height() + self.hu)
-            self.showImg = self.img.scaled(*self.showImgScale)
-            new_w = x - (self.showImg.width() * (x - self.imgPoint.x())) / (
-                    self.showImg.width() - self.wu)
-            new_h = y - (self.showImg.height() * (y - self.imgPoint.y())) / (
-                    self.showImg.height() - self.hu)
+            self.showImgScale = (self.showImgScale[0]+ self.wu, self.showImgScale[1] + self.hu)
+
+            new_w = x - (self.showImgScale[0] * (x - self.imgPoint.x())) / (
+                    self.showImgScale[0] - self.wu)
+            new_h = y - (self.showImgScale[1] * (y - self.imgPoint.y())) / (
+                    self.showImgScale[1] - self.hu)
             self.imgPoint = QPoint(new_w, new_h)
             self.repaint()
         elif zoom < 0:
             # 缩小图片
-            if self.showImg.width() > self.width() \
-                    and self.showImg.size() != self.size():  # 当视图比控件大的时候才可以缩小
-                self.showImgScale = (self.showImg.width() - self.wu, self.showImg.height() - self.hu)
-                self.showImg = self.img.scaled(*self.showImgScale)
-                new_w = x - (self.showImg.width() * (x - self.imgPoint.x())) / (
-                        self.showImg.width() + self.wu)
-                new_h = y - (self.showImg.height() * (y - self.imgPoint.y())) / (
-                        self.showImg.height() + self.hu)
+            if self.showImgScale[0] > self.width() \
+                    and QSize(*self.showImgScale) != self.size():  # 当视图比控件大的时候才可以缩小
+                self.showImgScale = (self.showImgScale[0] - self.wu, self.showImgScale[1] - self.hu)
+
+                new_w = x - (self.showImgScale[0] * (x - self.imgPoint.x())) / (
+                        self.showImgScale[0] + self.wu)
+                new_h = y - (self.showImgScale[1] * (y - self.imgPoint.y())) / (
+                        self.showImgScale[1] + self.hu)
                 self.imgPoint = QPoint(new_w, new_h)
                 self.repaint()
 
@@ -305,7 +306,7 @@ class ImageShower(QWidget):
     def resizeEvent(self, e):
         # 设置大小时会调用此函数
         if self.parent is not None:
-            self.showImg = self.img.scaled(self.size())
+            self.showImgScale=(self.size().width(),self.size().height())
             self.imgPoint = QPoint(0, 0)
             self.update()
 
