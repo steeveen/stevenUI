@@ -45,7 +45,7 @@ class mainWindowImp(Ui_MainWindow, QWidget):
         self.ctNp = np.zeros((250, 250, 530))
         self.suvNp = np.zeros((250, 250, 530))
         self.preNp = np.zeros((250, 250, 530))
-        self.ctILabel = ImageShower(self.mFrame, imagePath=ctPath)
+        self.ctILabel = ImageShower(self.mFrame, image=self.ctNp)
         self.ctILabel.setGeometry(QtCore.QRect(60, 50, ILabelW, ILabelH))
         font = QtGui.QFont()
         font.setPointSize(15)
@@ -54,7 +54,7 @@ class mainWindowImp(Ui_MainWindow, QWidget):
         self.ctILabel.setObjectName("ctILabel")
         self.ctILabel.setLocWatcher(self.xLab, self.yLab, self.ctLab)
 
-        self.petILabel = ImageShower(self.mFrame, imagePath=suvPath)
+        self.petILabel = ImageShower(self.mFrame, image=self.suvNp)
         self.petILabel.setGeometry(QtCore.QRect(310, 50, 230, ILabelH))
         font = QtGui.QFont()
         font.setPointSize(15)
@@ -63,7 +63,7 @@ class mainWindowImp(Ui_MainWindow, QWidget):
         self.petILabel.setObjectName("petILabel")
         self.petILabel.setLocWatcher(self.xLab, self.yLab, self.petLab)
 
-        self.gtSegILabel = ImageMaskShower(self.mFrame, imagePath=suvPath, maskPath=prePath)
+        self.gtSegILabel = ImageMaskShower(self.mFrame, image=self.suvNp,mask=self.preNp)
         self.gtSegILabel.setGeometry(QtCore.QRect(560, 50, ILabelW, ILabelH))
         font = QtGui.QFont()
         font.setPointSize(15)
@@ -72,7 +72,7 @@ class mainWindowImp(Ui_MainWindow, QWidget):
         self.gtSegILabel.setObjectName("gtSegILabel")
         self.gtSegILabel.setLocWatcher(self.xLab, self.yLab, self.maskLab)
 
-        self.gtSegILabel_2 = ImageDrawer(self.mFrame, imagePath=suvPath, maskPath=prePath)
+        self.gtSegILabel_2 = ImageDrawer(self.mFrame, image=self.suvNp,mask=self.preNp)
         self.gtSegILabel_2.setGeometry(QtCore.QRect(810, 50, ILabelW, ILabelH))
         font = QtGui.QFont()
         font.setPointSize(15)

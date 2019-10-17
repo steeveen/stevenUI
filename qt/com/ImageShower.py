@@ -42,7 +42,11 @@ class Main(QWidget):
 
 class ImageShower(QWidget):
 
-    def __init__(self, parent=None, imagePath=r'E:\pyWorkspace\stevenUI\res\ct.tif'):
+    def setImgNp(self,imgNp):
+        self.imgNp=imgNp
+        self.repaint()
+
+    def __init__(self, parent, image):
         super().__init__(parent)
         print(' init ')
 
@@ -50,7 +54,7 @@ class ImageShower(QWidget):
         self.setMouseTracking(True)
 
 
-        imgNp = skio.imread(imagePath)
+        imgNp = image
         self.imgNp = np.stack([imgNp, imgNp, imgNp], axis=2)
 
         self.showImgScale = (self.size().width(), self.size().height())

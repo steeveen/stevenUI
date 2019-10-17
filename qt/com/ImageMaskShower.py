@@ -23,11 +23,16 @@ from .ImageShower import ImageShower, QSize
 from skimage import  io as skio
 import numpy as np
 class ImageMaskShower(ImageShower):
-    def __init__(self,parent,imagePath,maskPath):
-        super().__init__(parent,imagePath)
+    def __init__(self,parent,image,mask):
+        super().__init__(parent,image)
         self.alpha=128
-        self.maskNp=(skio.imread(maskPath)>0).astype(np.uint8)
-        self.oriMaskNp = (skio.imread(maskPath) > 0).astype(np.uint8)
+        self.maskNp=(mask>0).astype(np.uint8)
+        self.oriMaskNp = (mask> 0).astype(np.uint8)
+
+    def setMaskNp(self, maskNp):
+        self.oriMaskNp=maskNp
+        self.maskNp = maskNp
+        self.repaint()
 
     def setMask(self, mask=None):
         self.maskNp = (mask > 0).astype(np.uint8)
