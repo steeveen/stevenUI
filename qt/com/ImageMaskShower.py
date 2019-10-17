@@ -25,17 +25,12 @@ import numpy as np
 class ImageMaskShower(ImageShower):
     def __init__(self,parent,imagePath,maskPath):
         super().__init__(parent,imagePath)
-
-
-
         self.alpha=128
         self.maskNp=(skio.imread(maskPath)>0).astype(np.uint8)
         self.oriMaskNp = (skio.imread(maskPath) > 0).astype(np.uint8)
 
     def setMask(self, mask=None):
-        if not mask:
-            mask = np.zeros((self.maskNp.shape[0], self.maskNp.shape[1]))
-        self.maskNp = int(mask > 0)
+        self.maskNp = (mask > 0).astype(np.uint8)
         self.repaint()
 
     def recoverAutoSeg(self):
@@ -57,10 +52,5 @@ class ImageMaskShower(ImageShower):
     def updateLocValueWatcher(self, mouseImgPoint):
         if self.hasLocWatcher:
             self.v.setText(str(int(self.maskNp[mouseImgPoint.y(), mouseImgPoint.x()])))
-    def setMask(self,mask=None):
-        # if mask == None:
-        #     mask=np.zeros((self.maskNp.shape[0],self.maskNp.shape[1]))
-        self.maskNp = (mask>0).astype(np.uint8)
-        self.repaint()
     def getMask(self):
         return self.maskNp
