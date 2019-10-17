@@ -284,7 +284,10 @@ class Ui_MainWindow(object):
         self.saveResult.setObjectName("saveResult")
         self.actionTest = QtWidgets.QAction(MainWindow)
         self.actionTest.setObjectName("actionTest")
+        self.openMenuItem = QtWidgets.QAction(MainWindow)
+        self.openMenuItem.setObjectName("openMenuItem")
         self.menu.addAction(self.saveResult)
+        self.menu.addAction(self.openMenuItem)
         self.menubar.addAction(self.menu.menuAction())
         self.menubar.addAction(self.menu_2.menuAction())
         self.menubar.addAction(self.menu_3.menuAction())
@@ -337,6 +340,7 @@ class Ui_MainWindow(object):
         self.menu_3.setTitle(_translate("MainWindow", "帮助"))
         self.saveResult.setText(_translate("MainWindow", "保存分割结果"))
         self.actionTest.setText(_translate("MainWindow", "test"))
+        self.openMenuItem.setText(_translate("MainWindow", "打开患者数据"))
 
 
 if __name__ == "__main__":

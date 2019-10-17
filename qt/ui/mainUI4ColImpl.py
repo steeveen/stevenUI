@@ -27,16 +27,24 @@ from typing import List
 from skimage import io as skio
 from PyQt5.QtWidgets import QFileDialog, QWidget
 
+from natsort import natsorted
+from glob import glob
+
 ILabelW = 230
 ILabelH = 450
+import numpy as np
 
 
 class mainWindowImp(Ui_MainWindow, QWidget):
 
     def setupUi(self, MainWindow, ctPath=r'E:\pyWorkspace\stevenUI\res\ct.tif',
                 suvPath=r'E:\pyWorkspace\stevenUI\res\suv.tif',
-                gtPath=r'E:\pyWorkspace\stevenUI\res\gt.bmp', prePath=r'E:\pyWorkspace\stevenUI\res\pre.bmp'):
+                gtPath=r'E:\pyWorkspace\stevenUI\res\gt.bmp',
+                prePath=r'E:\pyWorkspace\stevenUI\res\pre.bmp'):
         super().setupUi(MainWindow)
+        self.ctNp = np.zeros((250, 250, 530))
+        self.suvNp = np.zeros((250, 250, 530))
+        self.preNp = np.zeros((250, 250, 530))
         self.ctILabel = ImageShower(self.mFrame, imagePath=ctPath)
         self.ctILabel.setGeometry(QtCore.QRect(60, 50, ILabelW, ILabelH))
         font = QtGui.QFont()
@@ -55,7 +63,7 @@ class mainWindowImp(Ui_MainWindow, QWidget):
         self.petILabel.setObjectName("petILabel")
         self.petILabel.setLocWatcher(self.xLab, self.yLab, self.petLab)
 
-        self.gtSegILabel = ImageMaskShower(self.mFrame,imagePath=suvPath, maskPath=prePath)
+        self.gtSegILabel = ImageMaskShower(self.mFrame, imagePath=suvPath, maskPath=prePath)
         self.gtSegILabel.setGeometry(QtCore.QRect(560, 50, ILabelW, ILabelH))
         font = QtGui.QFont()
         font.setPointSize(15)
@@ -75,8 +83,26 @@ class mainWindowImp(Ui_MainWindow, QWidget):
         def saveResult():
             filename = QFileDialog.getExistingDirectory(self, '选取文件夹', r'E:\test')
             print('filename', filename)
-            skio.imsave(os.path.join(filename, '1.png'), self.gtSegILabel.getMask()*255)
+            skio.imsave(os.path.join(filename, '1.png'), self.gtSegILabel.getMask() * 255)
 
+        self.saveResult.triggered.connect(saveResult)
+
+        def openPatient():
+            filename = QFileDialog.getExistingDirectory(self, '选取文件夹', r'E:\dataset')
+            ctps = natsorted(glob(os.path.join(filename, '[0-9]*ct.tif')))
+            suvps = natsorted(glob(os.path.join(filename, '[0-9]*suv.tif')))
+            pres = natsorted(glob(os.path.join(filename, '[0-9]*preMd.bmp')))
+            self.ctNp = np.array([skio.imread(i) for i in ctps])
+            print(self.ctNp)
+            print(self.ctNp.shape)
+            self.suvNp = np.array([skio.imread(i) for i in suvps])
+            self.preNp = np.array([skio.imread(i) for i in pres])
+
+            print(len(ctps))
+            print(len(suvps))
+            print(len(pres))
+
+        self.openMenuItem.triggered.connect(openPatient)
 
         def makeFriendShower(friends: List[ImageShower]):
             '''
@@ -87,9 +113,7 @@ class mainWindowImp(Ui_MainWindow, QWidget):
             for shower in friends:
                 shower.setFriendWatcher([i for i in friends if i != shower])
 
-        self.saveResult.triggered.connect(saveResult)
         makeFriendShower([self.ctILabel, self.petILabel, self.gtSegILabel, self.gtSegILabel_2])
-
 
         def addSegListener():
             if self.addSegBtn.isChecked():
@@ -97,33 +121,38 @@ class mainWindowImp(Ui_MainWindow, QWidget):
                 self.gtSegILabel_2.updateDrawerMode(1)
             else:
                 self.gtSegILabel_2.updateDrawerMode(0)
+
         def delSegListener():
             if self.delSegBtn.isChecked():
                 self.addSegBtn.setChecked(False)
                 self.gtSegILabel_2.updateDrawerMode(-1)
             else:
                 self.gtSegILabel_2.updateDrawerMode(0)
+
         self.addSegBtn.clicked.connect(addSegListener)
         self.delSegBtn.clicked.connect(delSegListener)
 
         self.brushSizeSpi.setValue(self.gtSegILabel_2.brushSize)
+
         def spinChangeListener():
             self.gtSegILabel_2.updateDrawerSize(self.brushSizeSpi.value())
+
         self.brushSizeSpi.valueChanged.connect(spinChangeListener)
 
         def resetSeg2():
             self.gtSegILabel_2.setMask(self.gtSegILabel.getMask())
+
         self.resetSegBtn.clicked.connect(resetSeg2)
 
         def confSeg2():
             self.gtSegILabel.setMask(self.gtSegILabel_2.getMask())
+
         self.confSegBtn.clicked.connect(confSeg2)
 
         def recoverSeg():
             self.gtSegILabel.recoverAutoSeg()
+
         self.recoverSegBtn.clicked.connect(recoverSeg)
-
-
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets

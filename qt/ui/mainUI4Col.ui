@@ -907,6 +907,7 @@ Index</string>
     <property name="title">
      <string>文件</string>
     </property>
+    <addaction name="openMenuItem"/>
     <addaction name="saveResult"/>
    </widget>
    <widget class="QMenu" name="menu_2">
@@ -932,6 +933,11 @@ Index</string>
   <action name="actionTest">
    <property name="text">
     <string>test</string>
+   </property>
+  </action>
+  <action name="openMenuItem">
+   <property name="text">
+    <string>打开患者数据</string>
    </property>
   </action>
  </widget>
