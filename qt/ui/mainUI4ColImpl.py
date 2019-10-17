@@ -64,7 +64,6 @@ class mainWindowImp(Ui_MainWindow, QWidget):
         self.gtSegILabel.setObjectName("gtSegILabel")
         self.gtSegILabel.setLocWatcher(self.xLab, self.yLab, self.maskLab)
 
-        # self.gtSegILabel_2 = ImageShower(self.mFrame, imagePath=gtPath)
         self.gtSegILabel_2 = ImageDrawer(self.mFrame, imagePath=suvPath, maskPath=prePath)
         self.gtSegILabel_2.setGeometry(QtCore.QRect(810, 50, ILabelW, ILabelH))
         font = QtGui.QFont()
@@ -77,8 +76,7 @@ class mainWindowImp(Ui_MainWindow, QWidget):
             filename = QFileDialog.getExistingDirectory(self, '选取文件夹', r'E:\test')
             print('filename', filename)
             skio.imsave(os.path.join(filename, '1.png'), self.gtSegILabel.getMask()*255)
-            # with open(filename, 'w') as f:
-            #     print(self.gtSegLabel.img)
+
 
         def makeFriendShower(friends: List[ImageShower]):
             '''
@@ -126,10 +124,7 @@ class mainWindowImp(Ui_MainWindow, QWidget):
         self.recoverSegBtn.clicked.connect(recoverSeg)
 
 
-    # def keyPressEvent(self, event):
-    #     print('press',str(event.key()))
-    # def keyReleaseEvent(self, event):
-    #     print('press',str(event.key()))
+
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 

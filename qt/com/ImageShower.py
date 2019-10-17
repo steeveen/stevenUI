@@ -29,7 +29,6 @@ from PyQt5.QtGui import *
 from typing import List
 from skimage import io as skio
 import numpy as np
-from PyQt5.QtCore import QRect
 import qimage2ndarray
 
 
@@ -50,7 +49,6 @@ class ImageShower(QWidget):
         self.parent = parent
         self.setMouseTracking(True)
 
-        # self.img = QPixmap(imagePath)#原图
 
         imgNp = skio.imread(imagePath)
         self.imgNp = np.stack([imgNp, imgNp, imgNp], axis=2)
@@ -76,21 +74,6 @@ class ImageShower(QWidget):
 
         self.initUI()
 
-    # def mapMouseRealPoint(self, pos):
-    #     '''
-    #     将鼠标在视图中的位置映射为放大后图像中的位置
-    #     :param pos: 鼠标位置
-    #     :return: 映射后在放大的图像上的位置（左上角为0,0，第一维为x，第二维为y）
-    #     '''
-    #     print('-----------------')
-    #     print('img scale', self.showImgScale)
-    #     print('size', self.size())
-    #     print('img pint', self.imgPoint)
-    #     print('-----------------')
-    #     realX = pos.x() * self.showImgScale[0] / self.size().width() - self.imgPoint.x()
-    #     realY = pos.y() * self.showImgScale[1] / self.size().height() - self.imgPoint.y()
-    #     self.showMousePos = QPoint(int(realX), int(realY))
-    #     return self.showMousePos
 
     def np2QPixmap(self,arr):
         return QPixmap(qimage2ndarray.array2qimage(arr))
@@ -105,8 +88,6 @@ class ImageShower(QWidget):
         imgX = int(self.imgNp.shape[1] / self.showImgScale[0] * (pos.x() - self.imgPoint.x()))
         imgY = int(self.imgNp.shape[0] / self.showImgScale[1] * (
                 pos.y() - self.imgPoint.y()))
-        # print('bias y', self.imgPoint.y())
-        # print('scale y', self.showImgScale[1])
         return QPoint(int(imgX), int(imgY))
 
 
@@ -222,8 +203,6 @@ class ImageShower(QWidget):
             self.prepareRecoverFriendWatcherImg()
 
     def wheelEvent(self, e):
-        # print(self.imgPoint.x())
-        # print(self.showImgScale)
         if e.angleDelta().y() > 0:
             zoom = -1
         elif e.angleDelta().y() < 0:
