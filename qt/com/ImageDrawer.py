@@ -19,7 +19,9 @@ code is far away from bugs with the god animal protecting
  @Belong = 'newStevenUi'  @MadeBy = 'PyCharm'
  @Author = 'steven'   @DateTime = '2019/10/15 13:52'
 '''
-from .ImageShower import ImageShower, QPen, QPainter, Qt, QBrush, QRect
+import qimage2ndarray
+
+from .ImageShower import ImageShower, QPen, QPainter, Qt, QBrush, QRect, QPixmap
 import numpy as np
 class ImageDrawer(ImageShower):
     def __init__(self,parent=None, imagePath=r'E:\pyWorkspace\stevenUI\res\ct.tif'):
@@ -50,9 +52,12 @@ class ImageDrawer(ImageShower):
     def prepareMoveMaskCenter(self, mouseX, mouseY):
         self.maskX = mouseX
         self.maskY = mouseY
+        print('maskx',self.maskX)
+        print('masky',self.maskY)
         self.repaint()
 
     def mouseDragNoCtrl(self, e):
+        print('drawer mouse drag')
         self.prepareMoveMaskCenter(int(e.pos().x()), int(e.pos().y()))
         # print('rrrrrrrrrrrua')
         # qp=QPainter(self)
@@ -64,10 +69,16 @@ class ImageDrawer(ImageShower):
         # self.repaint()
 
     def drawMask(self):
+        self.maskNp=np.zeros((556, 250, 4))
+        self.maskNp[:,:,0]=255
+        self.maskNp[:,:,3]=128
+        self.painter.drawPixmap(self.imgPoint, QPixmap(qimage2ndarray.array2qimage(self.maskNp)))
+        print('draw mask')
+        pass
 
     def paintEvent(self, QPaintEvent):
         self.painter.begin(self)
         self.drawImg()
-        self.drawGuideLine()
         self.drawMask()
+        self.drawGuideLine()
         self.painter.end()
