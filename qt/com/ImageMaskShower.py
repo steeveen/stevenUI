@@ -20,26 +20,28 @@ code is far away from bugs with the god animal protecting
  @Author = 'steven'   @DateTime = '2019/10/17 15:06'
 '''
 from .ImageShower import ImageShower, QSize
-from skimage import  io as skio
+from skimage import io as skio
 import numpy as np
-class ImageMaskShower(ImageShower):
-    def __init__(self,parent,image,mask):
-        super().__init__(parent,image)
-        self.alpha=128
-        self.maskNp=(mask>0).astype(np.uint8)
-        self.oriMaskNp = (mask> 0).astype(np.uint8)
 
-    def setMaskNp(self, maskNp):
-        self.oriMaskNp=maskNp
-        self.maskNp = maskNp
-        self.repaint()
+
+class ImageMaskShower(ImageShower):
+    def __init__(self, parent, image, mask):
+        super().__init__(parent, image)
+        self.alpha = 128
+        self.maskNp = (mask > 0).astype(np.uint8)
+        self.oriMaskNp = (mask > 0).astype(np.uint8)
+
+    def setOriMaskNp(self, maskNp):
+        self.oriMaskNp = (maskNp > 0).astype(np.uint8)
+        self.setMask(maskNp)
+
 
     def setMask(self, mask=None):
         self.maskNp = (mask > 0).astype(np.uint8)
         self.repaint()
 
     def recoverAutoSeg(self):
-        self.maskNp=self.oriMaskNp
+        self.maskNp = self.oriMaskNp
         self.repaint()
 
     def paintEvent(self, QPaintEvent):
@@ -57,5 +59,6 @@ class ImageMaskShower(ImageShower):
     def updateLocValueWatcher(self, mouseImgPoint):
         if self.hasLocWatcher:
             self.v.setText(str(int(self.maskNp[mouseImgPoint.y(), mouseImgPoint.x()])))
+
     def getMask(self):
         return self.maskNp

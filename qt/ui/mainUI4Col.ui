@@ -535,16 +535,6 @@
       <enum>Qt::Vertical</enum>
      </property>
     </widget>
-    <widget class="QLineEdit" name="sliceIndexEt">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>480</y>
-       <width>41</width>
-       <height>20</height>
-      </rect>
-     </property>
-    </widget>
     <widget class="Line" name="line">
      <property name="geometry">
       <rect>
@@ -890,6 +880,16 @@ Index</string>
      </property>
      <property name="text">
       <string>网络自动分割</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="sliceIndexSpi">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>480</y>
+       <width>42</width>
+       <height>22</height>
+      </rect>
      </property>
     </widget>
    </widget>

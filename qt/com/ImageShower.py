@@ -54,8 +54,7 @@ class ImageShower(QWidget):
         self.setMouseTracking(True)
 
 
-        imgNp = image
-        self.imgNp = np.stack([imgNp, imgNp, imgNp], axis=2)
+        self.imgNp = image
 
         self.showImgScale = (self.size().width(), self.size().height())
         self.imgPoint = QPoint(0, 0)  # 图像的起始点，拖拽和放缩的时候用
@@ -273,7 +272,7 @@ class ImageShower(QWidget):
 
     def updateLocValueWatcher(self, mouseImgPoint):
         if self.hasLocWatcher:
-            self.v.setText(str(int(self.imgNp[mouseImgPoint.y(), mouseImgPoint.x(),0])))
+            self.v.setText(str(int(self.imgNp[mouseImgPoint.y(), mouseImgPoint.x()])))
 
     def updateFriendLocValueWatcher(self, mouseImgPoint):
         if self.hasFriendWatcher:

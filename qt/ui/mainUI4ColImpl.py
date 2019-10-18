@@ -45,7 +45,7 @@ class mainWindowImp(Ui_MainWindow, QWidget):
         self.ctNp = np.zeros((250, 250, 530))
         self.suvNp = np.zeros((250, 250, 530))
         self.preNp = np.zeros((250, 250, 530))
-        self.ctILabel = ImageShower(self.mFrame, image=self.ctNp)
+        self.ctILabel = ImageShower(self.mFrame, image=np.zeros((250, 530)))
         self.ctILabel.setGeometry(QtCore.QRect(60, 50, ILabelW, ILabelH))
         font = QtGui.QFont()
         font.setPointSize(15)
@@ -54,7 +54,7 @@ class mainWindowImp(Ui_MainWindow, QWidget):
         self.ctILabel.setObjectName("ctILabel")
         self.ctILabel.setLocWatcher(self.xLab, self.yLab, self.ctLab)
 
-        self.petILabel = ImageShower(self.mFrame, image=self.suvNp)
+        self.petILabel = ImageShower(self.mFrame, image=np.zeros((250, 530)))
         self.petILabel.setGeometry(QtCore.QRect(310, 50, 230, ILabelH))
         font = QtGui.QFont()
         font.setPointSize(15)
@@ -63,7 +63,7 @@ class mainWindowImp(Ui_MainWindow, QWidget):
         self.petILabel.setObjectName("petILabel")
         self.petILabel.setLocWatcher(self.xLab, self.yLab, self.petLab)
 
-        self.gtSegILabel = ImageMaskShower(self.mFrame, image=self.suvNp,mask=self.preNp)
+        self.gtSegILabel = ImageMaskShower(self.mFrame, image=np.zeros((250, 530)), mask=np.zeros((250, 530)))
         self.gtSegILabel.setGeometry(QtCore.QRect(560, 50, ILabelW, ILabelH))
         font = QtGui.QFont()
         font.setPointSize(15)
@@ -72,7 +72,7 @@ class mainWindowImp(Ui_MainWindow, QWidget):
         self.gtSegILabel.setObjectName("gtSegILabel")
         self.gtSegILabel.setLocWatcher(self.xLab, self.yLab, self.maskLab)
 
-        self.gtSegILabel_2 = ImageDrawer(self.mFrame, image=self.suvNp,mask=self.preNp)
+        self.gtSegILabel_2 = ImageDrawer(self.mFrame, image=np.zeros((250, 530)), mask=np.zeros((250, 530)))
         self.gtSegILabel_2.setGeometry(QtCore.QRect(810, 50, ILabelW, ILabelH))
         font = QtGui.QFont()
         font.setPointSize(15)
@@ -87,20 +87,32 @@ class mainWindowImp(Ui_MainWindow, QWidget):
 
         self.saveResult.triggered.connect(saveResult)
 
+        def updataImgInShower(index):
+            self.ctILabel.setImgNp(self.ctNp[:, :, index])
+            self.petILabel.setImgNp(self.suvNp[:, :, index])
+            self.gtSegILabel.setImgNp(self.suvNp[:, :, index])
+            self.gtSegILabel.setOriMaskNp(self.preNp[:, :, index])
+            self.gtSegILabel_2.setImgNp(self.suvNp[:, :, index])
+            self.gtSegILabel_2.setMask(self.preNp[:, :, index])
+
         def openPatient():
             filename = QFileDialog.getExistingDirectory(self, '选取文件夹', r'E:\dataset')
             ctps = natsorted(glob(os.path.join(filename, '[0-9]*ct.tif')))
             suvps = natsorted(glob(os.path.join(filename, '[0-9]*suv.tif')))
             pres = natsorted(glob(os.path.join(filename, '[0-9]*preMd.bmp')))
-            self.ctNp = np.array([skio.imread(i) for i in ctps])
+            self.ctNp = np.array([skio.imread(i) for i in ctps]).transpose((0, 2, 1))
             print(self.ctNp)
             print(self.ctNp.shape)
-            self.suvNp = np.array([skio.imread(i) for i in suvps])
-            self.preNp = np.array([skio.imread(i) for i in pres])
-
+            self.suvNp = np.array([skio.imread(i) for i in suvps]).transpose((0, 2, 1))
+            self.preNp = np.array([skio.imread(i) for i in pres]).transpose((0, 2, 1))
             print(len(ctps))
             print(len(suvps))
             print(len(pres))
+            self.sliceIndexSlider.setMaximum(self.ctNp.shape[2])
+            self.sliceIndexSlider.setValue(self.ctNp.shape[2] // 2)
+            self.sliceIndexSpi.setMaximum(self.ctNp.shape[2])
+            self.sliceIndexSpi.setValue(self.ctNp.shape[2] // 2)
+            updataImgInShower(self.ctNp.shape[2] // 2)
 
         self.openMenuItem.triggered.connect(openPatient)
 
@@ -154,6 +166,27 @@ class mainWindowImp(Ui_MainWindow, QWidget):
 
         self.recoverSegBtn.clicked.connect(recoverSeg)
 
+        self.sliceIndexSlider.setValue(self.ctNp.shape[2] // 2)
+        self.sliceIndexSlider.setMinimum(0)
+        self.sliceIndexSlider.setMaximum(1)
+        def sliceIndexSliderListener():
+            sliderIndex = int(self.sliceIndexSlider.value())
+            print('slider index',sliderIndex)
+            # if self.sliceIndexSlider.sliderReleased():
+
+            self.sliceIndexSpi.setValue(sliderIndex)
+
+        self.sliceIndexSlider.sliderReleased.connect(sliceIndexSliderListener)
+
+        def sliceIndexSpiListener():
+            print('slice spi value change')
+            self.sliceIndexSlider.setValue(self.sliceIndexSpi.value())
+            updataImgInShower(self.sliceIndexSpi.value())
+        self.sliceIndexSpi.valueChanged.connect(sliceIndexSpiListener)
+        # def sliceIndexEtListener():
+        #     print(' slice et trigged')
+        # self.sliceIndexEt.returnPressed.connect(sliceIndexEtListener)
+        # def sliceIndex
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 

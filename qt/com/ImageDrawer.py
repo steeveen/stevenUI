@@ -29,7 +29,7 @@ from .ImageMaskShower import ImageMaskShower
 class ImageDrawer(ImageMaskShower):
     def __init__(self, parent, image,mask):
         super().__init__(parent,image,mask)
-        self.brushDraw = True
+        self.brushDraw = 0
         self.brushSize = 3
 
     def updateDrawerSize(self, size):
@@ -52,7 +52,7 @@ class ImageDrawer(ImageMaskShower):
             skd.set_color(self.maskNp, [rr, cc],0)
         self.repaint()
 
-    def setMaskNp(self, maskNp):
+    def setOriMaskNp(self, maskNp):
         self.maskNp = maskNp
         self.repaint()
 
