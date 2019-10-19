@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainUI4Col.ui'
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -79,22 +79,26 @@ class Ui_MainWindow(object):
         self.genderLab = QtWidgets.QLabel(self.groupBox)
         self.genderLab.setGeometry(QtCore.QRect(190, 20, 54, 16))
         self.genderLab.setStyleSheet("background-color:#aaaaaa")
+        self.genderLab.setText("")
         self.genderLab.setAlignment(QtCore.Qt.AlignCenter)
         self.genderLab.setObjectName("genderLab")
         self.checkDataLab = QtWidgets.QLabel(self.groupBox)
         self.checkDataLab.setGeometry(QtCore.QRect(500, 20, 54, 16))
         self.checkDataLab.setStyleSheet("background-color:#aaaaaa")
         self.checkDataLab.setLineWidth(8)
+        self.checkDataLab.setText("")
         self.checkDataLab.setAlignment(QtCore.Qt.AlignCenter)
         self.checkDataLab.setObjectName("checkDataLab")
         self.birthLab = QtWidgets.QLabel(self.groupBox)
         self.birthLab.setGeometry(QtCore.QRect(350, 20, 54, 16))
         self.birthLab.setStyleSheet("background-color:#aaaaaa")
+        self.birthLab.setText("")
         self.birthLab.setAlignment(QtCore.Qt.AlignCenter)
         self.birthLab.setObjectName("birthLab")
         self.nameLab = QtWidgets.QLabel(self.groupBox)
         self.nameLab.setGeometry(QtCore.QRect(60, 20, 54, 16))
         self.nameLab.setStyleSheet("background-color:#aaaaaa")
+        self.nameLab.setText("")
         self.nameLab.setAlignment(QtCore.Qt.AlignCenter)
         self.nameLab.setObjectName("nameLab")
         self.groupBox_3 = QtWidgets.QGroupBox(self.mFrame)
@@ -306,10 +310,6 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "性别："))
         self.label_3.setText(_translate("MainWindow", "出生年月："))
         self.label_9.setText(_translate("MainWindow", "检查日期："))
-        self.genderLab.setText(_translate("MainWindow", "男"))
-        self.checkDataLab.setText(_translate("MainWindow", "201701"))
-        self.birthLab.setText(_translate("MainWindow", "197706"))
-        self.nameLab.setText(_translate("MainWindow", "XXX"))
         self.groupBox_3.setTitle(_translate("MainWindow", "坐标信息"))
         self.label_26.setText(_translate("MainWindow", "X："))
         self.label_27.setText(_translate("MainWindow", "Y："))
@@ -341,14 +341,4 @@ class Ui_MainWindow(object):
         self.saveResult.setText(_translate("MainWindow", "保存分割结果"))
         self.actionTest.setText(_translate("MainWindow", "test"))
         self.openMenuItem.setText(_translate("MainWindow", "打开患者数据"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
 

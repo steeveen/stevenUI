@@ -1,10 +1,10 @@
 import tkinter as tki
 from PIL import Image,ImageTk
-from tk.Com.Alg import createAlgPanel
-from tk.Com.com import  createToolbar,createMenu
-from tk.Com.ImageInfo import  createImageInfoPanel
-from tk.Com.PatientInfo import  createPatientPanel
-from tk.Com.StatusBar import createStatusBar
+from drop.tk import createAlgPanel
+from drop.tk import createMenu
+from drop.tk.Com.ImageInfo import  createImageInfoPanel
+from drop.tk import  createPatientPanel
+from drop.tk import createStatusBar
 
 win = tki.Tk()
 win.title("yudanqu")

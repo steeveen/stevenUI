@@ -19,7 +19,7 @@ code is far away from bugs with the god animal protecting
  @Belong = 'stevenUI'  @MadeBy = 'PyCharm'
  @Author = 'steven'   @DateTime = '2019/8/21 14:30'
 '''
-from qt.ui.drop.mainUI import  Ui_MainWindow
+from drop.qt.ui.drop.mainUI import  Ui_MainWindow
 from qt.com.ImageShower import ImageShower
 class mainWindowImp(Ui_MainWindow):
     def setupUi(self, MainWindow,ctPath=r'E:\pyWorkspace\stevenUI\res\ct.tif',suvPath=r'E:\pyWorkspace\stevenUI\res\suv.tif',

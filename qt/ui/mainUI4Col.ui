@@ -235,7 +235,7 @@
        <string notr="true">background-color:#aaaaaa</string>
       </property>
       <property name="text">
-       <string>男</string>
+       <string/>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -257,7 +257,7 @@
        <number>8</number>
       </property>
       <property name="text">
-       <string>201701</string>
+       <string/>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -276,7 +276,7 @@
        <string notr="true">background-color:#aaaaaa</string>
       </property>
       <property name="text">
-       <string>197706</string>
+       <string/>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -295,7 +295,7 @@
        <string notr="true">background-color:#aaaaaa</string>
       </property>
       <property name="text">
-       <string>XXX</string>
+       <string/>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
