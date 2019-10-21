@@ -19,33 +19,43 @@ code is far away from bugs with the god animal protecting
  @Belong = 'stevenUI'  @MadeBy = 'PyCharm'
  @Author = 'steven'   @DateTime = '2019/8/21 14:30'
 '''
-from PyQt5 import QtWidgets,QtCore,QtGui
+from PyQt5 import QtWidgets, QtCore, QtGui
 
 from qt.com.ImageMaskShower import ImageMaskShower
 from qt.com.PBDiaImpl import PBDiaImpl
-from qt.ui.mainUI4Col import Ui_MainWindow
+from qt.ui.mainUI4Col import Ui_LymphomaSeg
 from qt.com.ImageShower import ImageShower
 from qt.com.ImageDrawer import ImageDrawer
 from typing import List
 from skimage import io as skio
 from PyQt5.QtWidgets import QFileDialog, QWidget
-from PyQt5.QtCore import QThread,Qt
+from PyQt5.QtCore import QThread, Qt
 from PyQt5.QtWidgets import QApplication
-from qt.Utils.LoadDataTh import  LoadDataTh
-
-
-
+from qt.Utils.LoadDataTh import LoadDataTh
+from qt.com.AboutNetDia import Ui_Dialog as ABoutNet
+from qt.com.AboutDia import Ui_Dialog as About
 from natsort import natsorted
 from glob import glob
 
 ILabelW = 230
 ILabelH = 450
 import numpy as np
-patientsData={'63':{'name':'张文茂','gender':'男','birthday':'197706','checkday':'201702'}}
 
-# dataPath=r'E:\dataset'
-dataPath=r'G:\63'
-class mainWindowImp(Ui_MainWindow, QWidget):
+patientsData = {'63': {'name': '张文茂', 'gender': '男', 'birthday': '197706', 'checkday': '201702',
+                       'doc':'1、腹膜后淋巴结增大，代谢增高；左侧锁骨上窝略增大淋巴结，代谢增高；'
+                             '不除外恶性病变（淋巴瘤）可能，建议活检\n'
+                             '2、脾脏体积增大，代谢未见异常，请随诊观察'
+                            '3、扫描野内骨髓弥漫性代谢增高，考虑反应性改变，请结合临床\n'
+                             '4、右肺上叶胸膜下小结节灶，代谢未见明显异常，建议定期随诊复查\n'
+                             '5、脂肪肝\n'
+                             '6、左侧股骨头致密骨岛；颈、胸、腰椎退行性变\n'
+                             '7、双侧基底节区腔隙性脑梗塞；双侧上颌窦炎'}}
+
+dataPath = r'E:\dataset'
+
+
+# dataPath=r'G:\63'
+class mainWindowImp(Ui_LymphomaSeg, QWidget):
 
     def setupUi(self, MainWindow, ctPath=r'E:\pyWorkspace\stevenUI\res\ct.tif',
                 suvPath=r'E:\pyWorkspace\stevenUI\res\suv.tif',
@@ -92,7 +102,9 @@ class mainWindowImp(Ui_MainWindow, QWidget):
 
         self.loadDataTh = LoadDataTh()
         self.loadDataTh.loadDataSignal.connect(self.loadData)
-        self.dataLoaded=False
+        self.dataLoaded = False
+
+
 
         def saveResult():
             filename = QFileDialog.getExistingDirectory(self, '选取文件夹', r'E:\test')
@@ -100,6 +112,22 @@ class mainWindowImp(Ui_MainWindow, QWidget):
             skio.imsave(os.path.join(filename, '1.png'), self.gtSegILabel.getMask() * 255)
 
         self.saveResult.triggered.connect(saveResult)
+
+        # def aboutDenseX():
+        #     print('about denseX')
+        #
+        #     aboutNetMain.setWindowModality(Qt.ApplicationModal)
+        #     # aboutNetMain.setWindowFlag(Qt.FramelessWindowHint)
+        #     aboutNetMain.show()
+        #     print('about denseX aaaa')
+        #
+        # self.aboutDenseXItem.triggered.connect(aboutDenseX)
+
+        def aboutSw():
+            print('关于本软件')
+        self.aboutItem.triggered.connect(aboutSw)
+
+
 
         def updataImgInShower(index):
             self.ctILabel.setImgNp(self.ctNp[:, :, index])
@@ -109,68 +137,66 @@ class mainWindowImp(Ui_MainWindow, QWidget):
             self.gtSegILabel_2.setImgNp(self.suvNp[:, :, index])
             self.gtSegILabel_2.setMask(self.preNp[:, :, index])
 
-        self.unit=1
+        self.unit = 1
 
         def openPatient():
             filename = QFileDialog.getExistingDirectory(self, '选取文件夹', dataPath)
-            if filename==None or filename=='':
+            if filename == None or filename == '':
                 return
 
             self.loadDataTh.setFileName(filename)
             self.loadDataTh.start()
 
-            pdiMain=QtWidgets.QMainWindow()
+            pdiMain = QtWidgets.QMainWindow()
             pdiMain.setFixedHeight(100)
-            pd=PBDiaImpl()
+            pd = PBDiaImpl()
             pd.setupUi(pdiMain)
             pdiMain.setWindowModality(Qt.ApplicationModal)
             pdiMain.setWindowFlag(Qt.FramelessWindowHint)
             pdiMain.show()
 
-
-
-
-            i=0
-            waitTime=1
-            while i<100:
+            i = 0
+            waitTime = 1
+            while i < 100:
 
                 pd.setValue(i + 1)
-                if i<20:
+                if i < 20:
                     pd.setPanel('读取文件数据……')
-                    if i==19 :
+                    if i == 19:
                         if self.dataLoaded:
-                            i+=1
+                            i += 1
                         else:
-                            i+=0
+                            i += 0
                     else:
-                        i+=1
+                        i += 1
 
-                    if i==19 and  self.dataLoaded:
-                        i+=1
+                    if i == 19 and self.dataLoaded:
+                        i += 1
 
 
 
-                elif i<40:
-                    waitTime=2
+                elif i < 40:
+                    waitTime = 2
                     pd.setPanel('解析文件数据……')
                     i += 1
-                elif i<90:
-                    waitTime=3
-                    pd.setPanel('进行辅助分割……')
+                elif i < 70:
+                    waitTime = 2
+                    pd.setPanel('加载DenseX-Net与Faster RCNN分割检测模型……')
+                    i += 1
+                elif i < 90:
+                    waitTime = 3
+                    pd.setPanel('执行网络辅助分割……')
                     i += 1
                 else:
-                    waitTime=1
+                    waitTime = 1
                     pd.setPanel('图像生成中……')
                     i += 1
                 QThread.msleep(int(waitTime * 100))
                 QApplication.processEvents()
-            i=0
-            waitTime=0
+            i = 0
+            waitTime = 0
 
-            self.dataLoaded=False
-
-
-
+            self.dataLoaded = False
 
             # ctps = natsorted(glob(os.path.join(filename, '[0-9]*ct.tif')))
             # suvps = natsorted(glob(os.path.join(filename, '[0-9]*suv.tif')))
@@ -184,15 +210,49 @@ class mainWindowImp(Ui_MainWindow, QWidget):
             self.sliceIndexSlider.setValue(self.ctNp.shape[2] // 2)
             self.sliceIndexSpi.setMaximum(self.ctNp.shape[2])
             self.sliceIndexSpi.setValue(self.ctNp.shape[2] // 2)
+
+
+            self.ctLowSpi.setValue(np.min(self.ctNp))
+            self.ctHighSpi.setValue(np.max(self.ctNp))
+            self.ctLowSpi.setMinimum(np.min(self.ctNp))
+            self.ctLowSpi.setMaximum(np.max(self.ctNp))
+            self.ctHighSpi.setMinimum(np.min(self.ctNp))
+            self.ctHighSpi.setMaximum(np.max(self.ctNp))
+
+            self.ctLowSdr.setMinimum(np.min(self.ctNp))
+            self.ctLowSdr.setMaximum(np.max(self.ctNp))
+            self.ctHighSdr.setMinimum(np.min(self.ctNp))
+            self.ctHighSdr.setMaximum(np.max(self.ctNp))
+
+
+            self.petLowSpi.setValue(np.min(self.suvNp))
+            self.petHighSpi.setValue(np.max(self.suvNp))
+            self.petLowSpi.setMinimum(np.min(self.suvNp))
+            self.petLowSpi.setMaximum(np.max(self.suvNp))
+            self.petHighSpi.setMinimum(np.min(self.suvNp))
+            self.petHighSpi.setMaximum(np.max(self.suvNp))
+
+            self.petLowSlider.setMinimum(np.min(self.suvNp))
+            self.petLowSlider.setMaximum(np.max(self.suvNp))
+            self.petHighSdr.setMinimum(np.min(self.suvNp))
+            self.petHighSdr.setMaximum(np.max(self.suvNp))
+
+            print('ct max',np.max(self.ctNp))
+
+
+
             updataImgInShower(self.ctNp.shape[2] // 2)
 
-            def setPanelText(panel,text):
-                panel.setText(QtCore.QCoreApplication.translate ("Dialog", "<html><head/><body><p align=\"center\">"+text+"</p></body></html>"))
-            pa=patientsData[os.path.basename(filename)]
-            setPanelText( self.nameLab,pa['name'])
-            setPanelText(self.genderLab,pa['gender'])
-            setPanelText(self.birthLab,pa['birthday'])
-            setPanelText(self.checkDataLab,pa['checkday'])
+            def setPanelText(panel, text):
+                panel.setText(QtCore.QCoreApplication.translate("Dialog",
+                                                                "<html><head/><body><p align=\"center\">" + text + "</p></body></html>"))
+
+            pa = patientsData[os.path.basename(filename)]
+            setPanelText(self.nameLab, pa['name'])
+            setPanelText(self.genderLab, pa['gender'])
+            setPanelText(self.birthLab, pa['birthday'])
+            setPanelText(self.checkDataLab, pa['checkday'])
+            setPanelText(self.docText,pa['doc'])
 
         self.openMenuItem.triggered.connect(openPatient)
 
@@ -246,37 +306,97 @@ class mainWindowImp(Ui_MainWindow, QWidget):
 
         self.recoverSegBtn.clicked.connect(recoverSeg)
 
-
-
         self.sliceIndexSlider.setValue(self.ctNp.shape[2] // 2)
         self.sliceIndexSlider.setMinimum(0)
         self.sliceIndexSlider.setMaximum(1)
+
         def sliceIndexSliderListener():
             sliderIndex = int(self.sliceIndexSlider.value())
-            print('slider index',sliderIndex)
+            print('slider index', sliderIndex)
             # if self.sliceIndexSlider.sliderReleased():
 
             self.sliceIndexSpi.setValue(sliderIndex)
-
-        self.sliceIndexSlider.sliderReleased.connect(sliceIndexSliderListener)
+        self.sliceIndexSlider.valueChanged.connect(sliceIndexSliderListener)
+        # self.sliceIndexSlider.sliderReleased.connect(sliceIndexSliderListener)
 
         def sliceIndexSpiListener():
             print('slice spi value change')
             self.sliceIndexSlider.setValue(self.sliceIndexSpi.value())
             updataImgInShower(self.sliceIndexSpi.value())
-        self.sliceIndexSpi.valueChanged.connect(sliceIndexSpiListener)
-        # def sliceIndexEtListener():
-        #     print(' slice et trigged')
-        # self.sliceIndexEt.returnPressed.connect(sliceIndexEtListener)
-        # def sliceIndex
 
-    def loadData(self,data):
+        self.sliceIndexSpi.valueChanged.connect(sliceIndexSpiListener)
+
+        def ctHighSdrListener():
+            self.ctHighSpi.setValue(int(self.ctHighSdr.value()))
+        self.ctHighSdr.valueChanged.connect(ctHighSdrListener)
+
+        def ctLowSdrListener():
+            self.ctLowSpi.setValue(int(self.ctLowSdr.value()))
+
+        self.ctLowSdr.valueChanged.connect(ctLowSdrListener)
+
+        def ctHighSpiListener():
+            ctHighV=self.ctHighSpi.value()
+            ctLowV=self.ctLowSpi.value()
+            ctLowV=min(ctLowV,ctHighV)
+            self.ctHighSdr.setValue(ctHighV)
+            self.ctLowSdr.setValue(ctLowV)
+            self.ctLowSpi.setValue(ctLowV)
+            self.ctILabel.clipImg(ctLowV,ctHighV)
+        self.ctHighSpi.valueChanged.connect(ctHighSpiListener)
+
+        def ctLowSpiListener():
+            ctHighV=self.ctHighSpi.value()
+            ctLowV=self.ctLowSpi.value()
+            ctHighV=max(ctLowV,ctHighV)
+            self.ctHighSdr.setValue(ctHighV)
+            self.ctLowSdr.setValue(ctLowV)
+            self.ctHighSpi.setValue(ctHighV)
+            self.ctILabel.clipImg(ctLowV,ctHighV)
+        self.ctLowSpi.valueChanged.connect(ctLowSpiListener)
+
+
+
+
+        def petHighSdrListener():
+            self.petHighSpi.setValue(int(self.petHighSdr.value()))
+        self.petHighSdr.valueChanged.connect(petHighSdrListener)
+
+        def petLowSliderListener():
+            self.petLowSpi.setValue(int(self.petLowSlider.value()))
+        self.petLowSlider.valueChanged.connect(petLowSliderListener)
+
+        def petHighSpiListener():
+            petHighV=self.petHighSpi.value()
+            petLowV=self.petLowSpi.value()
+            petLowV=min(petLowV,petHighV)
+            self.petHighSdr.setValue(petHighV)
+            self.petLowSlider.setValue(petLowV)
+            self.petLowSpi.setValue(petLowV)
+            self.petILabel.clipImg(petLowV,petHighV)
+            self.gtSegILabel.clipImg(petLowV, petHighV)
+            self.gtSegILabel_2.clipImg(petLowV, petHighV)
+        self.petHighSpi.valueChanged.connect(petHighSpiListener)
+
+        def petLowSpiListener():
+            petHighV=self.petHighSpi.value()
+            petLowV=self.petLowSpi.value()
+            petHighV=max(petLowV,petHighV)
+            self.petHighSdr.setValue(petHighV)
+            self.petLowSlider.setValue(petLowV)
+            self.petHighSpi.setValue(petHighV)
+            self.petILabel.clipImg(petLowV,petHighV)
+            self.gtSegILabel.clipImg(petLowV,petHighV)
+            self.gtSegILabel_2.clipImg(petLowV,petHighV)
+        self.petLowSpi.valueChanged.connect(petLowSpiListener)
+
+    def loadData(self, data):
         # ctData,suvData,preData):
         print('loadData run')
-        self.ctNp=data[0]
-        self.suvNp=data[1]
-        self.preNp=data[2]
-        self.dataLoaded=True
+        self.ctNp = data[0]
+        self.suvNp = data[1]
+        self.preNp = data[2]
+        self.dataLoaded = True
 
 
 if __name__ == '__main__':
@@ -294,5 +414,37 @@ if __name__ == '__main__':
     ui.setupUi(MainWindow, ctPath=ctPath, suvPath=suvPath, gtPath=gtPath, prePath=prePath)
     ui.statusbar.showMessage(
         'Huiyan Jiang Lab, Software College, Northeastern University(NEU), Shenyang, Liaoning, China')
+
+    aboutNetMain = QtWidgets.QDialog()
+    aboutNetMain.setFixedHeight(600)
+    an = ABoutNet()
+    an.setupUi(aboutNetMain)
+    def aboutDenseX():
+        print('about denseX')
+        aboutNetMain.setWindowModality(Qt.ApplicationModal)
+        aboutNetMain.setFixedHeight(400)
+        # aboutNetMain.setWindowFlag(Qt.FramelessWindowHint)
+        aboutNetMain.show()
+        print('about denseX aaaa')
+    print('set ui')
+    ui.aboutDenseXItem.triggered.connect(aboutDenseX)
+
+    aboutMain = QtWidgets.QDialog()
+    aboutMain.setFixedHeight(600)
+    a = About()
+    a.setupUi(aboutMain)
+
+
+    def about():
+        print('about denseX')
+        aboutMain.setWindowModality(Qt.ApplicationModal)
+        aboutMain.setFixedHeight(150)
+        # aboutNetMain.setWindowFlag(Qt.FramelessWindowHint)
+        aboutMain.show()
+        print('about denseX aaaa')
+
+    ui.aboutItem.triggered.connect(about)
+
     MainWindow.show()
     sys.exit(app.exec_())
+

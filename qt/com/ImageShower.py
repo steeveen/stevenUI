@@ -42,8 +42,10 @@ class Main(QWidget):
 
 class ImageShower(QWidget):
 
-    def setImgNp(self,imgNp):
-        self.imgNp=imgNp
+    def setImgNp(self, imgNp):
+        self.imgNp = imgNp
+        self.minV=np.min(self.imgNp)
+        self.maxV=np.max(self.imgNp)
         self.repaint()
 
     def __init__(self, parent, image):
@@ -53,12 +55,12 @@ class ImageShower(QWidget):
         self.parent = parent
         self.setMouseTracking(True)
 
-
         self.imgNp = image
 
         self.showImgScale = (self.size().width(), self.size().height())
         self.imgPoint = QPoint(0, 0)  # 图像的起始点，拖拽和放缩的时候用
         self.showMousePos = QPoint(0, 0)
+        self.index = 0
 
         self.setScaleUnit(self.width(), self.height())  # 初始化放缩的单位大小
 
@@ -75,10 +77,12 @@ class ImageShower(QWidget):
 
         self.ctrlDown = False
 
+        self.minV = np.min(self.imgNp)
+        self.maxV = np.max(self.imgNp)
+
         self.initUI()
 
-
-    def np2QPixmap(self,arr):
+    def np2QPixmap(self, arr):
         return QPixmap(qimage2ndarray.array2qimage(arr))
 
     def mapMouseImgPoint(self, pos):
@@ -92,10 +96,6 @@ class ImageShower(QWidget):
         imgY = int(self.imgNp.shape[0] / self.showImgScale[1] * (
                 pos.y() - self.imgPoint.y()))
         return QPoint(int(imgX), int(imgY))
-
-
-
-
 
     @property
     def imgPoint(self):
@@ -143,7 +143,15 @@ class ImageShower(QWidget):
         self.painter.end()
 
     def drawImg(self):
-        self.painter.drawPixmap(self.imgPoint,self.np2QPixmap(self.imgNp).scaled(QSize(*self.showImgScale)))
+        clipedImg = np.clip(self.imgNp, self.minV, self.maxV)
+        if self.maxV-self.minV==0:
+            if self.minV!=0:
+                clipedImg =((clipedImg == self.minV).astype(np.uint8) * 255)
+            if self.minV!=0:
+                clipedImg =np.zeros(clipedImg.shape)
+        else:
+            clipedImg = ((clipedImg - self.minV) / (self.maxV - self.minV) * 255).astype(np.uint8)
+        self.painter.drawPixmap(self.imgPoint, self.np2QPixmap(clipedImg).scaled(QSize(*self.showImgScale)))
 
     def drawGuideLine(self):
         self.painter.setPen(QPen(QColor(self.guideLineColor), self.guideLineThickness))
@@ -215,7 +223,7 @@ class ImageShower(QWidget):
 
     def prepareRecoverImg(self):
         self.imgPoint = QPoint(0, 0)
-        self.showImgScale=(self.size().width(),self.size().height())
+        self.showImgScale = (self.size().width(), self.size().height())
         self.repaint()
 
     def prepareRecoverFriendWatcherImg(self):
@@ -234,7 +242,7 @@ class ImageShower(QWidget):
 
     def prepareZoomImg(self, zoom, x, y):
         if zoom > 0:  # 放大图片
-            self.showImgScale = (self.showImgScale[0]+ self.wu, self.showImgScale[1] + self.hu)
+            self.showImgScale = (self.showImgScale[0] + self.wu, self.showImgScale[1] + self.hu)
 
             new_w = x - (self.showImgScale[0] * (x - self.imgPoint.x())) / (
                     self.showImgScale[0] - self.wu)
@@ -288,9 +296,22 @@ class ImageShower(QWidget):
     def resizeEvent(self, e):
         # 设置大小时会调用此函数
         if self.parent is not None:
-            self.showImgScale=(self.size().width(),self.size().height())
+            self.showImgScale = (self.size().width(), self.size().height())
             self.imgPoint = QPoint(0, 0)
             self.update()
+
+    def clipMinImg(self, minV):
+        self.minV = minV
+        self.repaint()
+
+    def clipMaxImg(self, maxV):
+        self.maxV = maxV
+        self.repaint()
+
+    def clipImg(self, minV, maxV):
+        self.minV = minV
+        self.maxV = maxV
+        self.repaint()
 
 
 if __name__ == '__main__':

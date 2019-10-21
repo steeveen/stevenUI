@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>LymphomaSeg</class>
+ <widget class="QMainWindow" name="LymphomaSeg">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>淋巴瘤辅助分割系统</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QFrame" name="mFrame">
@@ -563,6 +563,16 @@
      <property name="title">
       <string>更多信息</string>
      </property>
+     <widget class="QTextBrowser" name="docText">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>401</width>
+        <height>91</height>
+       </rect>
+      </property>
+     </widget>
     </widget>
     <widget class="QLabel" name="label_8">
      <property name="geometry">
@@ -605,6 +615,9 @@
        <height>22</height>
       </rect>
      </property>
+     <property name="minimum">
+      <number>-2000</number>
+     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -618,51 +631,14 @@
        <height>22</height>
       </rect>
      </property>
+     <property name="minimum">
+      <number>2000</number>
+     </property>
      <property name="value">
-      <number>99</number>
+      <number>2000</number>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="ctlowEt">
-     <property name="geometry">
-      <rect>
-       <x>250</x>
-       <y>510</y>
-       <width>41</width>
-       <height>20</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="ctHighEt">
-     <property name="geometry">
-      <rect>
-       <x>250</x>
-       <y>540</y>
-       <width>41</width>
-       <height>20</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="petLowEt">
-     <property name="geometry">
-      <rect>
-       <x>500</x>
-       <y>510</y>
-       <width>41</width>
-       <height>20</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="petHighEt">
-     <property name="geometry">
-      <rect>
-       <x>500</x>
-       <y>540</y>
-       <width>41</width>
-       <height>20</height>
-      </rect>
      </property>
     </widget>
     <widget class="QSlider" name="petHighSdr">
@@ -674,8 +650,11 @@
        <height>22</height>
       </rect>
      </property>
+     <property name="minimum">
+      <number>2000</number>
+     </property>
      <property name="value">
-      <number>99</number>
+      <number>2000</number>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -689,6 +668,9 @@
        <width>181</width>
        <height>22</height>
       </rect>
+     </property>
+     <property name="minimum">
+      <number>-2000</number>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -892,6 +874,58 @@ Index</string>
       </rect>
      </property>
     </widget>
+    <widget class="QSpinBox" name="ctHighSpi">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>540</y>
+       <width>42</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>2000</number>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="ctLowSpi">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>510</y>
+       <width>42</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>-2000</number>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="petHighSpi">
+     <property name="geometry">
+      <rect>
+       <x>500</x>
+       <y>540</y>
+       <width>42</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>2000</number>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="petLowSpi">
+     <property name="geometry">
+      <rect>
+       <x>500</x>
+       <y>510</y>
+       <width>42</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>-2000</number>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -910,18 +944,14 @@ Index</string>
     <addaction name="openMenuItem"/>
     <addaction name="saveResult"/>
    </widget>
-   <widget class="QMenu" name="menu_2">
-    <property name="title">
-     <string>编辑</string>
-    </property>
-   </widget>
    <widget class="QMenu" name="menu_3">
     <property name="title">
      <string>帮助</string>
     </property>
+    <addaction name="aboutDenseXItem"/>
+    <addaction name="aboutItem"/>
    </widget>
    <addaction name="menu"/>
-   <addaction name="menu_2"/>
    <addaction name="menu_3"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -938,6 +968,16 @@ Index</string>
   <action name="openMenuItem">
    <property name="text">
     <string>打开患者数据</string>
+   </property>
+  </action>
+  <action name="aboutDenseXItem">
+   <property name="text">
+    <string>关于DenseX-Net分割网络</string>
+   </property>
+  </action>
+  <action name="aboutItem">
+   <property name="text">
+    <string>关于本软件</string>
    </property>
   </action>
  </widget>
